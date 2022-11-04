@@ -10,7 +10,7 @@ import io.flutter.plugin.platform.PlatformViewFactory
 class ParticipantViewFactory(createArgsCodec: MessageCodec<Any>, private val plugin: PluginHandler) : PlatformViewFactory(createArgsCodec) {
     private val TAG = "RoomListener"
 
-    override fun create(context: Context, viewId: Int, args: Any?): PlatformView? {
+    override fun create(p0: Context?, p1: Int, p2: Any? PlatformView? {
         var videoTrack: VideoTrack? = null
 
         if (args != null) {

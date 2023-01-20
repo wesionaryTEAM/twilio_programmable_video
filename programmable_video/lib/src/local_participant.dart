@@ -8,15 +8,20 @@ class LocalParticipant implements Participant {
 
   final String _signalingRegion;
 
-  NetworkQualityLevel _networkQualityLevel = NetworkQualityLevel.NETWORK_QUALITY_LEVEL_UNKNOWN;
+  NetworkQualityLevel _networkQualityLevel =
+      NetworkQualityLevel.NETWORK_QUALITY_LEVEL_UNKNOWN;
 
-  final List<LocalAudioTrackPublication> _localAudioTrackPublications = <LocalAudioTrackPublication>[];
+  final List<LocalAudioTrackPublication> _localAudioTrackPublications =
+      <LocalAudioTrackPublication>[];
 
-  final List<LocalDataTrackPublication> _localDataTrackPublications = <LocalDataTrackPublication>[];
+  final List<LocalDataTrackPublication> _localDataTrackPublications =
+      <LocalDataTrackPublication>[];
 
-  final List<LocalVideoTrackPublication> _localVideoTrackPublications = <LocalVideoTrackPublication>[];
+  final List<LocalVideoTrackPublication> _localVideoTrackPublications =
+      <LocalVideoTrackPublication>[];
 
-  final StreamController<LocalAudioTrackPublishedEvent> _onAudioTrackPublished = StreamController<LocalAudioTrackPublishedEvent>.broadcast();
+  final StreamController<LocalAudioTrackPublishedEvent> _onAudioTrackPublished =
+      StreamController<LocalAudioTrackPublishedEvent>.broadcast();
 
   /// Notifies  the listener that a [LocalAudioTrack] has been shared to a [Room].
   /// Note: If a [LocalAudioTrack] was provided in [ConnectOptions] this event will
@@ -24,29 +29,40 @@ class LocalParticipant implements Participant {
   /// being raised.
   late Stream<LocalAudioTrackPublishedEvent> onAudioTrackPublished;
 
-  final StreamController<LocalAudioTrackPublicationFailedEvent> _onAudioTrackPublicationFailed = StreamController<LocalAudioTrackPublicationFailedEvent>.broadcast();
+  final StreamController<LocalAudioTrackPublicationFailedEvent>
+      _onAudioTrackPublicationFailed =
+      StreamController<LocalAudioTrackPublicationFailedEvent>.broadcast();
 
   /// the listener that the [LocalParticipant] failed to publish a
   /// [LocalAudioTrack] to a Room.
-  late Stream<LocalAudioTrackPublicationFailedEvent> onAudioTrackPublicationFailed;
+  late Stream<LocalAudioTrackPublicationFailedEvent>
+      onAudioTrackPublicationFailed;
 
-  final StreamController<LocalDataTrackPublishedEvent> _onDataTrackPublished = StreamController<LocalDataTrackPublishedEvent>.broadcast();
+  final StreamController<LocalDataTrackPublishedEvent> _onDataTrackPublished =
+      StreamController<LocalDataTrackPublishedEvent>.broadcast();
 
   /// Notifies  the listener that a [LocalDataTrack] has been shared to a [Room].
   late Stream<LocalDataTrackPublishedEvent> onDataTrackPublished;
 
-  final StreamController<LocalDataTrackPublicationFailedEvent> _onDataTrackPublicationFailed = StreamController<LocalDataTrackPublicationFailedEvent>.broadcast();
+  final StreamController<LocalDataTrackPublicationFailedEvent>
+      _onDataTrackPublicationFailed =
+      StreamController<LocalDataTrackPublicationFailedEvent>.broadcast();
 
   /// Notifies the listener that the [LocalParticipant] failed to publish a
   /// [LocalDataTrack] to a [Room].
-  late Stream<LocalDataTrackPublicationFailedEvent> onDataTrackPublicationFailed;
+  late Stream<LocalDataTrackPublicationFailedEvent>
+      onDataTrackPublicationFailed;
 
-  final StreamController<LocalNetworkQualityLevelChangedEvent> _onNetworkQualityLevelChanged = StreamController<LocalNetworkQualityLevelChangedEvent>.broadcast();
+  final StreamController<LocalNetworkQualityLevelChangedEvent>
+      _onNetworkQualityLevelChanged =
+      StreamController<LocalNetworkQualityLevelChangedEvent>.broadcast();
 
   /// Notifies the listener that the [LocalParticipant]'s [NetworkQualityLevel] has changed.
-  late Stream<LocalNetworkQualityLevelChangedEvent> onNetworkQualityLevelChanged;
+  late Stream<LocalNetworkQualityLevelChangedEvent>
+      onNetworkQualityLevelChanged;
 
-  final StreamController<LocalVideoTrackPublishedEvent> _onVideoTrackPublished = StreamController<LocalVideoTrackPublishedEvent>.broadcast();
+  final StreamController<LocalVideoTrackPublishedEvent> _onVideoTrackPublished =
+      StreamController<LocalVideoTrackPublishedEvent>.broadcast();
 
   /// Notifies the listener that a [LocalVideoTrack] has been shared to a [Room].
   /// Note: If a [LocalVideoTrack] was provided in [ConnectOptions] this event will
@@ -54,11 +70,21 @@ class LocalParticipant implements Participant {
   /// being raised.
   late Stream<LocalVideoTrackPublishedEvent> onVideoTrackPublished;
 
-  final StreamController<LocalVideoTrackPublicationFailedEvent> _onVideoTrackPublicationFailed = StreamController<LocalVideoTrackPublicationFailedEvent>.broadcast();
+  final StreamController<LocalVideoTrackPublishedEvent>
+      _onVideoTrackUnpublished =
+      StreamController<LocalVideoTrackPublishedEvent>.broadcast();
+
+  /// Notifies the listener that a [LocalVideoTrack] has been removed from a [Room].
+  Stream<LocalVideoTrackPublishedEvent>? onVideoTrackUnpublished;
+
+  final StreamController<LocalVideoTrackPublicationFailedEvent>
+      _onVideoTrackPublicationFailed =
+      StreamController<LocalVideoTrackPublicationFailedEvent>.broadcast();
 
   /// Notifies the listener that the [LocalParticipant] failed to publish a
   /// [LocalVideoTrack] to a [Room].
-  late Stream<LocalVideoTrackPublicationFailedEvent> onVideoTrackPublicationFailed;
+  late Stream<LocalVideoTrackPublicationFailedEvent>
+      onVideoTrackPublicationFailed;
 
   /// The SID of this [LocalParticipant].
   @override
@@ -81,17 +107,21 @@ class LocalParticipant implements Participant {
   NetworkQualityLevel get networkQualityLevel => _networkQualityLevel;
 
   /// Read-only list of local audio track publications.
-  List<LocalAudioTrackPublication> get localAudioTracks => [..._localAudioTrackPublications];
+  List<LocalAudioTrackPublication> get localAudioTracks =>
+      [..._localAudioTrackPublications];
 
   /// Read-only list of local data track publications.
-  List<LocalDataTrackPublication> get localDataTracks => [..._localDataTrackPublications];
+  List<LocalDataTrackPublication> get localDataTracks =>
+      [..._localDataTrackPublications];
 
   /// Read-only list of local video track publications.
-  List<LocalVideoTrackPublication> get localVideoTracks => [..._localVideoTrackPublications];
+  List<LocalVideoTrackPublication> get localVideoTracks =>
+      [..._localVideoTrackPublications];
 
   /// Read-only list of audio track publications.
   @override
-  List<AudioTrackPublication> get audioTracks => [..._localAudioTrackPublications];
+  List<AudioTrackPublication> get audioTracks =>
+      [..._localAudioTrackPublications];
 
   /// Read-only list of video track publications.
   @override
@@ -106,13 +136,15 @@ class LocalParticipant implements Participant {
     onDataTrackPublicationFailed = _onDataTrackPublicationFailed.stream;
     onNetworkQualityLevelChanged = _onNetworkQualityLevelChanged.stream;
     onVideoTrackPublished = _onVideoTrackPublished.stream;
+    onVideoTrackUnpublished = _onVideoTrackUnpublished.stream;
     onVideoTrackPublicationFailed = _onVideoTrackPublicationFailed.stream;
   }
 
   /// Dispose the LocalParticipant
   void _dispose() {
     _closeStreams();
-    _localVideoTrackPublications.forEach((videoTrack) => videoTrack.localVideoTrack._dispose());
+    _localVideoTrackPublications
+        .forEach((videoTrack) => videoTrack.localVideoTrack._dispose());
   }
 
   /// Dispose the event streams.
@@ -123,12 +155,14 @@ class LocalParticipant implements Participant {
     await _onDataTrackPublicationFailed.close();
     await _onNetworkQualityLevelChanged.close();
     await _onVideoTrackPublished.close();
+    await _onVideoTrackUnpublished.close();
     await _onVideoTrackPublicationFailed.close();
   }
 
   /// Construct from a [LocalParticipantModel].
   factory LocalParticipant._fromModel(LocalParticipantModel model) {
-    var localParticipant = LocalParticipant(model.identity, model.sid, model.signalingRegion);
+    var localParticipant =
+        LocalParticipant(model.identity, model.sid, model.signalingRegion);
     localParticipant._updateFromModel(model);
     return localParticipant;
   }
@@ -137,37 +171,48 @@ class LocalParticipant implements Participant {
   void _updateFromModel(LocalParticipantModel model) {
     _networkQualityLevel = model.networkQualityLevel;
 
-    for (final localAudioTrackPublicationModel in model.localAudioTrackPublications) {
-      final localAudioTrackPublication = _localAudioTrackPublications.firstWhere(
+    for (final localAudioTrackPublicationModel
+        in model.localAudioTrackPublications) {
+      final localAudioTrackPublication =
+          _localAudioTrackPublications.firstWhere(
         (p) => p.trackSid == localAudioTrackPublicationModel.sid,
-        orElse: () => LocalAudioTrackPublication._fromModel(localAudioTrackPublicationModel),
+        orElse: () => LocalAudioTrackPublication._fromModel(
+            localAudioTrackPublicationModel),
       );
       if (!_localAudioTrackPublications.contains(localAudioTrackPublication)) {
         _localAudioTrackPublications.add(localAudioTrackPublication);
       }
-      localAudioTrackPublication._updateFromModel(localAudioTrackPublicationModel);
+      localAudioTrackPublication
+          ._updateFromModel(localAudioTrackPublicationModel);
     }
 
-    for (final localDataTrackPublicationModel in model.localDataTrackPublications) {
+    for (final localDataTrackPublicationModel
+        in model.localDataTrackPublications) {
       final localDataTrackPublication = _localDataTrackPublications.firstWhere(
         (p) => p.trackSid == localDataTrackPublicationModel.sid,
-        orElse: () => LocalDataTrackPublication._fromModel(localDataTrackPublicationModel),
+        orElse: () => LocalDataTrackPublication._fromModel(
+            localDataTrackPublicationModel),
       );
       if (!_localDataTrackPublications.contains(localDataTrackPublication)) {
         _localDataTrackPublications.add(localDataTrackPublication);
       }
-      localDataTrackPublication._updateFromModel(localDataTrackPublicationModel);
+      localDataTrackPublication
+          ._updateFromModel(localDataTrackPublicationModel);
     }
 
-    for (final localVideoTrackPublicationModel in model.localVideoTrackPublications) {
-      final localVideoTrackPublication = _localVideoTrackPublications.firstWhere(
+    for (final localVideoTrackPublicationModel
+        in model.localVideoTrackPublications) {
+      final localVideoTrackPublication =
+          _localVideoTrackPublications.firstWhere(
         (p) => p.trackSid == localVideoTrackPublicationModel.sid,
-        orElse: () => LocalVideoTrackPublication._fromModel(localVideoTrackPublicationModel),
+        orElse: () => LocalVideoTrackPublication._fromModel(
+            localVideoTrackPublicationModel, this),
       );
       if (!_localVideoTrackPublications.contains(localVideoTrackPublication)) {
         _localVideoTrackPublications.add(localVideoTrackPublication);
       }
-      localVideoTrackPublication._updateFromModel(localVideoTrackPublicationModel);
+      localVideoTrackPublication._updateFromModel(
+          localVideoTrackPublicationModel, this);
     }
   }
 
@@ -177,25 +222,55 @@ class LocalParticipant implements Participant {
     _updateFromModel(event.localParticipantModel!);
 
     if (event is LocalAudioTrackPublished) {
-      final localAudioTrackPublication = _localAudioTrackPublications.firstWhere((LocalAudioTrackPublication p) => p.trackSid == event.publicationModel.sid, orElse: () => LocalAudioTrackPublication._fromModel(event.publicationModel));
-      _onAudioTrackPublished.add(LocalAudioTrackPublishedEvent(this, localAudioTrackPublication));
+      final localAudioTrackPublication =
+          _localAudioTrackPublications.firstWhere(
+              (LocalAudioTrackPublication p) =>
+                  p.trackSid == event.publicationModel.sid,
+              orElse: () => LocalAudioTrackPublication._fromModel(
+                  event.publicationModel));
+      _onAudioTrackPublished
+          .add(LocalAudioTrackPublishedEvent(this, localAudioTrackPublication));
     } else if (event is LocalAudioTrackPublicationFailed) {
       final localAudioTrack = LocalAudioTrack._fromModel(event.localAudioTrack);
-      _onAudioTrackPublicationFailed.add(LocalAudioTrackPublicationFailedEvent(this, localAudioTrack, TwilioException._fromModel(event.exception)));
+      _onAudioTrackPublicationFailed.add(LocalAudioTrackPublicationFailedEvent(
+          this, localAudioTrack, TwilioException._fromModel(event.exception)));
     } else if (event is LocalDataTrackPublished) {
-      final localDataTrackPublication = _localDataTrackPublications.firstWhere((LocalDataTrackPublication p) => p.trackSid == event.publicationModel.sid, orElse: () => LocalDataTrackPublication._fromModel(event.publicationModel));
-      _onDataTrackPublished.add(LocalDataTrackPublishedEvent(this, localDataTrackPublication));
+      final localDataTrackPublication = _localDataTrackPublications.firstWhere(
+          (LocalDataTrackPublication p) =>
+              p.trackSid == event.publicationModel.sid,
+          orElse: () =>
+              LocalDataTrackPublication._fromModel(event.publicationModel));
+      _onDataTrackPublished
+          .add(LocalDataTrackPublishedEvent(this, localDataTrackPublication));
     } else if (event is LocalDataTrackPublicationFailed) {
       final localDataTrack = LocalDataTrack._fromModel(event.localDataTrack);
-      _onDataTrackPublicationFailed.add(LocalDataTrackPublicationFailedEvent(this, localDataTrack, TwilioException._fromModel(event.exception)));
+      _onDataTrackPublicationFailed.add(LocalDataTrackPublicationFailedEvent(
+          this, localDataTrack, TwilioException._fromModel(event.exception)));
     } else if (event is LocalVideoTrackPublished) {
-      final localVideoTrackPublication = _localVideoTrackPublications.firstWhere((LocalVideoTrackPublication p) => p.trackSid == event.publicationModel.sid, orElse: () => LocalVideoTrackPublication._fromModel(event.publicationModel));
-      _onVideoTrackPublished.add(LocalVideoTrackPublishedEvent(this, localVideoTrackPublication));
+      final localVideoTrackPublication =
+          _localVideoTrackPublications.firstWhere(
+              (LocalVideoTrackPublication p) =>
+                  p.trackSid == event.publicationModel.sid,
+              orElse: () => LocalVideoTrackPublication._fromModel(
+                  event.publicationModel, this));
+      _onVideoTrackPublished
+          .add(LocalVideoTrackPublishedEvent(this, localVideoTrackPublication));
+    } else if (event is LocalVideoTrackUnpublished) {
+      final localVideoTrackPublication =
+          _localVideoTrackPublications.firstWhere(
+              (LocalVideoTrackPublication p) =>
+                  p.trackSid == event.publicationModel.sid,
+              orElse: () => LocalVideoTrackPublication._fromModel(
+                  event.publicationModel, this));
+      _onVideoTrackUnpublished
+          .add(LocalVideoTrackPublishedEvent(this, localVideoTrackPublication));
     } else if (event is LocalVideoTrackPublicationFailed) {
       final localVideoTrack = LocalVideoTrack._fromModel(event.localVideoTrack);
-      _onVideoTrackPublicationFailed.add(LocalVideoTrackPublicationFailedEvent(this, localVideoTrack, TwilioException._fromModel(event.exception)));
+      _onVideoTrackPublicationFailed.add(LocalVideoTrackPublicationFailedEvent(
+          this, localVideoTrack, TwilioException._fromModel(event.exception)));
     } else if (event is LocalNetworkQualityLevelChanged) {
-      _onNetworkQualityLevelChanged.add(LocalNetworkQualityLevelChangedEvent(this, event.networkQualityLevel));
+      _onNetworkQualityLevelChanged.add(LocalNetworkQualityLevelChangedEvent(
+          this, event.networkQualityLevel));
     }
   }
 }

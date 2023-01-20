@@ -66,7 +66,7 @@ class RemoteVideoTrackPublication implements VideoTrackPublication {
       _remoteVideoTrack ??= RemoteVideoTrack._fromModel(remoteVideoTrack, _remoteParticipant);
       _remoteVideoTrack!._updateFromModel(model.remoteVideoTrack!);
     } else {
-      _remoteVideoTrack = null;
+      _remoteVideoTrack ??= RemoteVideoTrack(model.sid, model.enabled, model.name, _remoteParticipant);
     }
   }
 }

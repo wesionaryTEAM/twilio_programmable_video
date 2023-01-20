@@ -105,6 +105,13 @@ abstract class ProgrammableVideoPlatform extends PlatformInterface {
     throw UnimplementedError('enableVideoTrack() has not been implemented.');
   }
 
+  /// Calls native code to start/stop a screen capture video track.
+  ///
+  /// The results of this operation are signaled to other Participants in the same Room.
+  Future<bool?> screenCapture(bool enabled, String name) {
+    throw UnimplementedError('screenCaptureTrack() has not been implemented.');
+  }
+
   /// Calls native code to send a String message.
   Future<void> sendMessage(String message, String name) {
     throw UnimplementedError('sendMessage() has not been implemented.');

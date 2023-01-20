@@ -1,13 +1,15 @@
 package twilio.flutter.twilio_programmable_video
 
-import android.app.Activity
+import android.app.Service
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile
 import android.content.Context
+import android.content.Intent
 import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
 import android.media.AudioFocusRequest
 import android.media.AudioManager
+import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -34,15 +36,14 @@ import com.twilio.video.RemoteParticipant
 import com.twilio.video.VideoCodec
 import com.twilio.video.Vp8Codec
 import com.twilio.video.Vp9Codec
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.PluginRegistry
 import java.nio.ByteBuffer
 import tvi.webrtc.voiceengine.WebRtcAudioUtils
 
-class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
+class PluginHandler : MethodCallHandler, BaseListener {
     private val TAG = "PluginHandler"
 
     private var previousAudioMode: Int? = null
@@ -52,8 +53,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private var audioFocusRequest: AudioFocusRequest? = null
 
     private var previousVolumeControlStream: Int = 0
-
-    private var activity: Activity? = null
 
     var applicationContext: Context
 
@@ -65,22 +64,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     constructor(applicationContext: Context) {
         this.applicationContext = applicationContext
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-    }
-
-    override fun onDetachedFromActivityForConfigChanges() {
-        this.activity = null
-    }
-
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        this.activity = binding.activity
-    }
-
-    override fun onDetachedFromActivity() {
-        this.activity = null
-    }
-
-    override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        this.activity = binding.activity
     }
 
     private val remoteParticipants: List<RemoteParticipant>?
@@ -111,11 +94,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             "setSpeakerphoneOn" -> setSpeakerphoneOn(call, result)
             "getSpeakerphoneOn" -> getSpeakerphoneOn(result)
             "deviceHasReceiver" -> deviceHasReceiver(result)
-            "getStats" -> getStats(result)
             "LocalAudioTrack#enable" -> localAudioTrackEnable(call, result)
             "LocalDataTrack#sendString" -> localDataTrackSendString(call, result)
             "LocalDataTrack#sendByteBuffer" -> localDataTrackSendByteBuffer(call, result)
             "LocalVideoTrack#enable" -> localVideoTrackEnable(call, result)
+            "LocalScreenShare#enable" -> localScreenShareEnable(call, result)
             "RemoteAudioTrack#enablePlayback" -> remoteAudioTrackEnable(call, result)
             "RemoteAudioTrack#isPlaybackEnabled" -> isRemoteAudioTrackPlaybackEnabled(call, result)
             "CameraCapturer#switchCamera" -> switchCamera(call, result)
@@ -148,6 +131,47 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     private fun setTorch(call: MethodCall, result: MethodChannel.Result) {
         VideoCapturerHandler.setTorch(call, result)
+    }
+
+    private fun localScreenShareEnable(call: MethodCall, result: MethodChannel.Result) {
+        if (TwilioProgrammableVideoPlugin.screenCapturer == null) {
+            val mediaProjectionManager: MediaProjectionManager =
+                    applicationContext.getSystemService(Service.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
+            TwilioProgrammableVideoPlugin.activityPluginBinding?.addActivityResultListener(
+                PluginRegistry.ActivityResultListener(function = fun(
+                    requestCode: Int,
+                    resultCode: Int,
+                    data: Intent
+                ): Boolean {
+                    screenCallback(
+                        requestCode,
+                        resultCode,
+                        data,
+                        applicationContext,
+                        call,
+                        result
+                    )
+                    return true
+                }
+                )
+            )
+            TwilioProgrammableVideoPlugin.activity?.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 111)
+        } else {
+            val localParticipant = TwilioProgrammableVideoPlugin.roomListener.room?.localParticipant
+            val screenTrack = localParticipant?.localVideoTracks?.find { it.localVideoTrack.videoCapturer.isScreencast }
+            if (screenTrack != null) {
+                val unpublished = localParticipant.unpublishTrack(screenTrack.localVideoTrack)
+                if (unpublished) {
+                    TwilioProgrammableVideoPlugin.localParticipantListener.onVideoTrackUnpublished(localParticipant, screenTrack)
+                    screenTrack.localVideoTrack.release()
+                    TwilioProgrammableVideoPlugin.screenCapturer = null
+                }
+            }
+            try {
+                return result.success(false)
+            } catch (e: Exception) {
+            }
+        }
     }
 
     private fun localVideoTrackEnable(call: MethodCall, result: MethodChannel.Result) {
@@ -579,7 +603,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             if (previousAudioMode == null) {
                 previousAudioMode = audioManager.mode
             }
-            val volumeControlStream = this.activity?.volumeControlStream
+            val volumeControlStream = TwilioProgrammableVideoPlugin.activity?.volumeControlStream
             if (volumeControlStream != null) {
                 previousVolumeControlStream = volumeControlStream
             }
@@ -630,7 +654,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
              */
 
             audioManager.isMicrophoneMute = false
-            this.activity?.volumeControlStream = AudioManager.STREAM_VOICE_CALL
+            TwilioProgrammableVideoPlugin.activity?.volumeControlStream = AudioManager.STREAM_VOICE_CALL
             val requestGranted = requestResult == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
             debug("requestAudioFocus => requestGranted: $requestGranted")
             return requestGranted
@@ -650,7 +674,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 previousAudioMode = null
             }
             audioManager.isMicrophoneMute = previousMicrophoneMute
-            this.activity?.volumeControlStream = previousVolumeControlStream
+            TwilioProgrammableVideoPlugin.activity?.volumeControlStream = previousVolumeControlStream
             return true
         }
     }

@@ -64,7 +64,8 @@ class LocalDataTrackPublishedEvent {
 }
 //#endregion
 
-class LocalNetworkQualityLevelChangedEvent implements NetworkQualityLevelChangedEvent {
+class LocalNetworkQualityLevelChangedEvent
+    implements NetworkQualityLevelChangedEvent {
   /// The local participant
   final LocalParticipant localParticipant;
 
@@ -104,6 +105,19 @@ class LocalVideoTrackPublishedEvent {
   final LocalVideoTrackPublication localVideoTrackPublication;
 
   LocalVideoTrackPublishedEvent(
+    this.localParticipant,
+    this.localVideoTrackPublication,
+  );
+}
+
+class LocalVideoTrackUnpublishedEvent {
+  /// The local participant that published the video track.
+  final LocalParticipant localParticipant;
+
+  /// The unpublished local video track.
+  final LocalVideoTrackPublication localVideoTrackPublication;
+
+  LocalVideoTrackUnpublishedEvent(
     this.localParticipant,
     this.localVideoTrackPublication,
   );

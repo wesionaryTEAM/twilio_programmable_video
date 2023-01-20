@@ -351,4 +351,8 @@ class RemoteParticipant implements Participant {
       _onNetworkQualityLevelChanged.add(RemoteNetworkQualityLevelChangedEvent(this, _networkQualityLevel));
     }
   }
+
+  bool removeVideoTrackPublication(RemoteVideoTrackPublication remoteVideoTrackPublication) {
+    return _remoteVideoTrackPublications.remove(remoteVideoTrackPublication);
+  }
 }

@@ -7,11 +7,12 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
 import com.twilio.video.Camera2Capturer
 import com.twilio.video.CameraCapturer
+import com.twilio.video.VideoCapturer
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import java.lang.Exception
 import tvi.webrtc.Camera2Enumerator
-import tvi.webrtc.VideoCapturer
+// import tvi.webrtc.VideoCapturer
 
 class VideoCapturerHandler {
     companion object {

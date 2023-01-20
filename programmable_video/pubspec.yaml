@@ -16,10 +16,11 @@ dependencies:
   permission_handler: ^10.2.0
   enum_to_string: ^2.0.1
   twilio_programmable_video_platform_interface:
-    git:
-      url : git@github.com:wesionaryTEAM/twilio_programmable_video.git
-      ref : master
-      path : programmable_video_platform_interface/
+    path: ../programmable_video_platform_interface
+    # git:
+    #   url : git@github.com:wesionaryTEAM/twilio_programmable_video.git
+    #   ref : master
+    #   path : programmable_video_platform_interface/
   collection: ^1.15.0
 
 dev_dependencies:

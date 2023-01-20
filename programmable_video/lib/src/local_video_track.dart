@@ -19,8 +19,12 @@ class LocalVideoTrack extends VideoTrack {
 
   /// Construct from a [LocalVideoTrackModel].
   factory LocalVideoTrack._fromModel(LocalVideoTrackModel model) {
-    var videoCapturer = model.cameraCapturer.type == 'CameraCapturer' ? CameraCapturer._fromModel(model.cameraCapturer) : throw Exception('Received unknown VideoCapturer');
-    var localVideoTrack = LocalVideoTrack(model.enabled, videoCapturer, name: model.name);
+    var videoCapturer = CameraCapturer._fromModel(model.cameraCapturer);
+    var localVideoTrack = LocalVideoTrack(
+      model.enabled,
+      videoCapturer,
+      name: model.name,
+    );
     localVideoTrack._updateFromModel(model);
     return localVideoTrack;
   }
@@ -51,7 +55,7 @@ class LocalVideoTrack extends VideoTrack {
   /// By default the widget will be mirrored, to change that set [mirror] to false.
   /// If you provide a [key] make sure it is unique among all [VideoTrack]s otherwise Flutter might send the wrong creation params to the native side.
   Widget widget({bool mirror = true, Key? key}) {
-    key ??= ValueKey('Twilio_LocalParticipant');
+    key ??= ValueKey('Twilio_LocalParticipant$name');
 
     var creationParams = {
       'isLocal': true,
@@ -59,7 +63,7 @@ class LocalVideoTrack extends VideoTrack {
     };
 
     if (Platform.isAndroid) {
-      return _widget ??= AndroidView(
+      Widget androidView = AndroidView(
         key: key,
         viewType: 'twilio_programmable_video/views',
         creationParams: creationParams,
@@ -68,6 +72,26 @@ class LocalVideoTrack extends VideoTrack {
           TwilioProgrammableVideo._log('LocalVideoTrack => View created: $viewId, creationParams: $creationParams');
         },
       );
+        if (name == 'ScreenCapture') {
+        return Container(
+          color: Color(0xFFFF0000),
+          padding: EdgeInsets.all(2),
+          child: Stack(
+            children: [
+              androidView,
+              Center(
+                child: Icon(
+                  Icons.screen_share,
+                  color: Color(0xFFFF0000),
+                  size: 48,
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      return androidView;
     }
 
     if (Platform.isIOS) {

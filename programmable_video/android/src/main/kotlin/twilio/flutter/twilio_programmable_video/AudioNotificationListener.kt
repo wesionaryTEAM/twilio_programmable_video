@@ -15,26 +15,26 @@ class AudioNotificationListener() : BaseListener() {
     private val intentFilter: IntentFilter = IntentFilter()
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
 
-    private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
-        override fun onServiceDisconnected(profile: Int) {
-            debug("onServiceDisconnected => profile: $profile")
-            if (profile == BluetoothProfile.HEADSET) {
-                bluetoothProfile = null
-                TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-            }
-        }
+    // private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
+    //     override fun onServiceDisconnected(profile: Int) {
+    //         debug("onServiceDisconnected => profile: $profile")
+    //         if (profile == BluetoothProfile.HEADSET) {
+    //             bluetoothProfile = null
+    //             TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+    //         }
+    //     }
 
-        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-            debug("onServiceConnected => profile: $profile, proxy: $proxy")
-           if (profile == BluetoothProfile.HEADSET) {
-               bluetoothProfile = proxy
-               if (bluetoothProfile!!.connectedDevices.size > 0 &&
-                   TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                   TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-               }
-           }
-        }
-    }
+    //     override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+    //         debug("onServiceConnected => profile: $profile, proxy: $proxy")
+    //        if (profile == BluetoothProfile.HEADSET) {
+    //            bluetoothProfile = proxy
+    //            if (bluetoothProfile!!.connectedDevices.size > 0 &&
+    //                TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+    //                TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+    //            }
+    //        }
+    //     }
+    // }
 
     var bluetoothProfile: BluetoothProfile? = null
 

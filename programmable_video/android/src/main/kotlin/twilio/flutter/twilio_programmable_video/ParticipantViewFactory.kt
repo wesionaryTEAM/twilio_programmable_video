@@ -11,7 +11,7 @@ class ParticipantViewFactory(createArgsCodec: MessageCodec<Any>, private val plu
     private val TAG = "RoomListener"
 
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        var videoTrack: VideoTrack
+        var videoTrack: VideoTrack? = null
         val params = args as Map<String, Any>
         if (params.containsKey("isLocal")) {
             debug("create => constructing local view")
@@ -25,14 +25,14 @@ class ParticipantViewFactory(createArgsCodec: MessageCodec<Any>, private val plu
                 val remoteParticipant = plugin.getRemoteParticipant(params["remoteParticipantSid"] as String)
                 val remoteVideoTrack = remoteParticipant?.remoteVideoTracks?.find { it.trackSid == params["remoteVideoTrackSid"] }
                 if (remoteParticipant != null && remoteVideoTrack != null) {
-                    videoTrack = remoteVideoTrack.remoteVideoTrack
+                    videoTrack = remoteVideoTrack.remoteVideoTrack as VideoTrack
                 }
             }
         }
 
         val videoView = VideoView(context)
         videoView.mirror = params["mirror"] as Boolean
-        return ParticipantView(videoView, videoTrack)
+        return ParticipantView(videoView, videoTrack!)
     }
 
     internal fun debug(msg: String) {

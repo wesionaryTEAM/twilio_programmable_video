@@ -11,7 +11,7 @@ class ParticipantViewFactory(createArgsCodec: MessageCodec<Any>, private val plu
     private val TAG = "RoomListener"
 
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        var videoTrack: VideoTrack? = null
+        var videoTrack: VideoTrack
         val params = args as Map<String, Any>
         if (params.containsKey("isLocal")) {
             debug("create => constructing local view")

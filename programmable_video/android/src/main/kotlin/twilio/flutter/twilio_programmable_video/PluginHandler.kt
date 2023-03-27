@@ -336,7 +336,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     private fun setSpeakerPhoneOnInternal() {
         val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-        val bluetoothProfileConnectionState: Int?
+        var bluetoothProfileConnectionState: Int?
         if (adapter != null) {
             bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
         }

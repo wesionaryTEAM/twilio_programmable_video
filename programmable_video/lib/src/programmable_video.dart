@@ -172,7 +172,6 @@ class TwilioProgrammableVideo {
     await [
       Permission.camera,
       Permission.microphone,
-      Permission.bluetoothConnect
     ].request();
     final micPermission = await Permission.microphone.status;
     final camPermission = await Permission.camera.status;

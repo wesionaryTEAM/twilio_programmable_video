@@ -25,14 +25,14 @@ class ParticipantViewFactory(createArgsCodec: MessageCodec<Any>, private val plu
                 val remoteParticipant = plugin.getRemoteParticipant(params["remoteParticipantSid"] as String)
                 val remoteVideoTrack = remoteParticipant?.remoteVideoTracks?.find { it.trackSid == params["remoteVideoTrackSid"] }
                 if (remoteParticipant != null && remoteVideoTrack != null) {
-                    videoTrack = remoteVideoTrack.remoteVideoTrack as VideoTrack
+                    videoTrack = remoteVideoTrack.remoteVideoTrack
                 }
             }
         }
 
         val videoView = VideoView(context)
         videoView.mirror = params["mirror"] as Boolean
-        return ParticipantView(videoView, videoTrack!)
+        return ParticipantView(videoView, videoTrack!!)
     }
 
     internal fun debug(msg: String) {

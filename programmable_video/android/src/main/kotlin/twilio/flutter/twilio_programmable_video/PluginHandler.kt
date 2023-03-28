@@ -370,9 +370,9 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         debug("applyAudioSettings")
         setSpeakerPhoneOnInternal()
 
-        if (!audioSettings.speakerEnabled) {
-            applyBluetoothSettings()
-        }
+        // if (!audioSettings.speakerEnabled) {
+        //     applyBluetoothSettings()
+        // }
     }
 
     // BluetoothSco being enabled functions similarly to holding Audio Focus when it comes

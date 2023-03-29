@@ -1,9 +1,9 @@
 package twilio.flutter.twilio_programmable_video
 
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothHeadset
-import android.bluetooth.BluetoothProfile
+// import android.bluetooth.BluetoothAdapter
+// import android.bluetooth.BluetoothDevice
+// import android.bluetooth.BluetoothHeadset
+// import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,25 +15,25 @@ class AudioNotificationListener() : BaseListener() {
     private val intentFilter: IntentFilter = IntentFilter()
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
 
-    private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
-        // override fun onServiceDisconnected(profile: Int) {
-        //     debug("onServiceDisconnected => profile: $profile")
-        //     if (profile == BluetoothProfile.HEADSET) {
-        //         bluetoothProfile = null
-        //         TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-        //     }
-        }
+    // private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
+    //     // override fun onServiceDisconnected(profile: Int) {
+    //     //     debug("onServiceDisconnected => profile: $profile")
+    //     //     if (profile == BluetoothProfile.HEADSET) {
+    //     //         bluetoothProfile = null
+    //     //         TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+    //     //     }
+    //     }
 
-        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-        //    debug("onServiceConnected => profile: $profile, proxy: $proxy")
-        //    if (profile == BluetoothProfile.HEADSET) {
-        //        bluetoothProfile = proxy
-        //        if (bluetoothProfile!!.connectedDevices.size > 0 &&
-        //            TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-        //            TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-        //        }
-        //    }
-        }
+        // override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
+        // //    debug("onServiceConnected => profile: $profile, proxy: $proxy")
+        // //    if (profile == BluetoothProfile.HEADSET) {
+        // //        bluetoothProfile = proxy
+        // //        if (bluetoothProfile!!.connectedDevices.size > 0 &&
+        // //            TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+        // //            TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+        // //        }
+        // //    }
+        // }
     }
 
     // var bluetoothProfile: BluetoothProfile? = null
@@ -44,7 +44,7 @@ class AudioNotificationListener() : BaseListener() {
         // https://developer.android.com/reference/android/media/AudioManager#ACTION_HEADSET_PLUG
         intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG)
         // https://developer.android.com/reference/android/bluetooth/BluetoothHeadset#ACTION_CONNECTION_STATE_CHANGED
-        intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
+        //intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
 
         // Other actions we could listen for:
         // 1. AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED
@@ -95,13 +95,13 @@ class AudioNotificationListener() : BaseListener() {
                 // val deviceName = if (bluetoothEvent) intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)?.name
                 //     else intent?.getStringExtra("portName") ?: return
 
-                debug("onReceive => connected: $connected\n\tevent: $event\n\tbluetoothEvent: $bluetoothEvent\n\twiredEvent: $wiredEvent\n\tdeviceName: $deviceName")
+               // debug("onReceive => connected: $connected\n\tevent: $event\n\tbluetoothEvent: $bluetoothEvent\n\twiredEvent: $wiredEvent\n\tdeviceName: $deviceName")
 
                 // if (bluetoothEvent) {
                 //     TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
                 // }
 
-                debug("onReceive => event: $event, connected: $connected, bluetooth: $bluetoothEvent, wired: $wiredEvent")
+            //    debug("onReceive => event: $event, connected: $connected, bluetooth: $bluetoothEvent, wired: $wiredEvent")
                 // sendEvent(event, mapOf(
                 //         "connected" to connected,
                 //         "bluetooth" to bluetoothEvent,

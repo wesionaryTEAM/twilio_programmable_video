@@ -1,8 +1,8 @@
 package twilio.flutter.twilio_programmable_video
 
 import android.app.Activity
-import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothProfile
+// import android.bluetooth.BluetoothAdapter
+// import android.bluetooth.BluetoothProfile
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
@@ -338,11 +338,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private fun setAudioSettings(call: MethodCall, result: MethodChannel.Result) {
         val speakerphoneEnabled = call.argument<Boolean>("speakerphoneEnabled")
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("speakerphoneEnabled"), null)
-        val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
-                ?: return result.error("MISSING_PARAMS", missingParameterMessage("bluetoothPreferred"), null)
+        // val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
+        //         ?: return result.error("MISSING_PARAMS", missingParameterMessage("bluetoothPreferred"), null)
 
         audioSettings.speakerEnabled = speakerphoneEnabled
-        audioSettings.bluetoothPreferred = bluetoothPreferred
+        // audioSettings.bluetoothPreferred = bluetoothPreferred
 
         TwilioProgrammableVideoPlugin.audioNotificationListener.listenForRouteChanges(applicationContext)
 
@@ -355,7 +355,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         val audioSettingsMap =
                 mapOf(
                         "speakerphoneEnabled" to audioSettings.speakerEnabled,
-                        "bluetoothPreferred" to audioSettings.bluetoothPreferred
+                        // "bluetoothPreferred" to audioSettings.bluetoothPreferred
                 )
         result.success(audioSettingsMap)
     }
@@ -370,9 +370,9 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         debug("applyAudioSettings")
         setSpeakerPhoneOnInternal()
 
-        if (!audioSettings.speakerEnabled) {
-            applyBluetoothSettings()
-        }
+        // if (!audioSettings.speakerEnabled) {
+        //     // applyBluetoothSettings()
+        // }
     }
 
     // BluetoothSco being enabled functions similarly to holding Audio Focus when it comes
@@ -381,32 +381,32 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     //
     // Given this, we only want to turn BluetoothSco on when we are actually using the audio system.
     internal fun applyBluetoothSettings() {
-        val isConnected = TwilioProgrammableVideoPlugin.isConnected()
-        val anyPlaying = TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()
-        debug("applyBluetoothSettings BEGIN =>\n" +
-                "\ton: ${audioSettings.bluetoothPreferred}\n" +
-                "\tscoOn: ${audioManager.isBluetoothScoOn}\n" +
-                "\tconnected: $isConnected\n" +
-                "\tanyPlaying: $anyPlaying")
-        if (isConnected || anyPlaying) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                setBluetoothSco(audioSettings.bluetoothPreferred)
-                audioManager.isBluetoothScoOn = audioSettings.bluetoothPreferred
-                debug("applyBluetoothSettings END => on: ${audioSettings.bluetoothPreferred} scoOn: ${audioManager.isBluetoothScoOn}")
-            }, 1000)
-        }
+        // val isConnected = TwilioProgrammableVideoPlugin.isConnected()
+        // val anyPlaying = TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()
+        // debug("applyBluetoothSettings BEGIN =>\n" +
+        //         "\ton: ${audioSettings.bluetoothPreferred}\n" +
+        //         "\tscoOn: ${audioManager.isBluetoothScoOn}\n" +
+        //         "\tconnected: $isConnected\n" +
+        //         "\tanyPlaying: $anyPlaying")
+        // if (isConnected || anyPlaying) {
+        //     Handler(Looper.getMainLooper()).postDelayed({
+        //         setBluetoothSco(audioSettings.bluetoothPreferred)
+        //         audioManager.isBluetoothScoOn = audioSettings.bluetoothPreferred
+        //         debug("applyBluetoothSettings END => on: ${audioSettings.bluetoothPreferred} scoOn: ${audioManager.isBluetoothScoOn}")
+        //     }, 1000)
+        // }
     }
 
     internal fun setBluetoothSco(on: Boolean) {
-        if (on) {
-            audioManager.startBluetoothSco()
-            debug("startBluetoothSco => on: $on\n" +
-                    "\tbluetoothPreferred: ${audioSettings.bluetoothPreferred}\n" +
-                    "\tscoOn: ${audioManager.isBluetoothScoOn}")
-        } else {
-            audioManager.stopBluetoothSco()
-            debug("stopBluetoothSco => on: $on\n\tbluetoothPreferred: ${audioSettings.bluetoothPreferred}\n\tscoOn: ${audioManager.isBluetoothScoOn}")
-        }
+        // if (on) {
+        //     audioManager.startBluetoothSco()
+        //     debug("startBluetoothSco => on: $on\n" +
+        //             "\tbluetoothPreferred: ${audioSettings.bluetoothPreferred}\n" +
+        //             "\tscoOn: ${audioManager.isBluetoothScoOn}")
+        // } else {
+        //     audioManager.stopBluetoothSco()
+        //     debug("stopBluetoothSco => on: $on\n\tbluetoothPreferred: ${audioSettings.bluetoothPreferred}\n\tscoOn: ${audioManager.isBluetoothScoOn}")
+        // }
     }
 
     private fun setSpeakerphoneOn(call: MethodCall, result: MethodChannel.Result) {
@@ -423,11 +423,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
        private fun setSpeakerPhoneOnInternal() {
-           val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-           var bluetoothProfileConnectionState: Int? = null
-           if (adapter != null) {
-               bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
-           }
+           // val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+           // // var bluetoothProfileConnectionState: Int? = null
+           // if (adapter != null) {
+           //     bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+           // }
 
            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
 
@@ -440,10 +440,10 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            // resulting in an edge case where audio will be routed via the receiver rather than the
            // bottom speaker.
 
-           if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-               bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+           // if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
+           //     bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
                applySpeakerPhoneSettings()
-           }
+         //  }
     }
 
     internal fun applySpeakerPhoneSettings() {
@@ -485,7 +485,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         TwilioProgrammableVideoPlugin.roomListener.room = null
         debug("disconnect => audioPlayers active: ${TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()}")
         if (!TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()) {
-            setBluetoothSco(false)
+            // setBluetoothSco(false)
             setAudioFocus(false)
         }
         result.success(true)

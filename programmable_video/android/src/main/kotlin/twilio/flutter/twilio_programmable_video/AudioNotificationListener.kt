@@ -16,12 +16,12 @@ class AudioNotificationListener() : BaseListener() {
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
 
     private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
-        override fun onServiceDisconnected(profile: Int) {
-            debug("onServiceDisconnected => profile: $profile")
-            if (profile == BluetoothProfile.HEADSET) {
-                bluetoothProfile = null
-                TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-            }
+        // override fun onServiceDisconnected(profile: Int) {
+        //     debug("onServiceDisconnected => profile: $profile")
+        //     if (profile == BluetoothProfile.HEADSET) {
+        //         bluetoothProfile = null
+        //         TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+        //     }
         }
 
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
@@ -36,7 +36,7 @@ class AudioNotificationListener() : BaseListener() {
         }
     }
 
-    var bluetoothProfile: BluetoothProfile? = null
+    // var bluetoothProfile: BluetoothProfile? = null
 
     private val receiver: BroadcastReceiver = getBroadcastReceiver()
 
@@ -60,13 +60,13 @@ class AudioNotificationListener() : BaseListener() {
     fun listenForRouteChanges(context: Context) {
         debug("listenForRouteChanges")
         context.registerReceiver(receiver, intentFilter)
-        BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+        // BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
     }
 
     fun stopListeningForRouteChanges(context: Context) {
         debug("stopListeningForRouteChanges")
         context.unregisterReceiver(receiver)
-        BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
+        // BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
     }
 
     private fun getBroadcastReceiver(): BroadcastReceiver {
@@ -74,48 +74,48 @@ class AudioNotificationListener() : BaseListener() {
         return object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val wiredEvent = intent?.action.equals(AudioManager.ACTION_HEADSET_PLUG)
-                val bluetoothEvent = intent?.action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
+                // val bluetoothEvent = intent?.action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
 
                 val connected: Boolean = when {
                     wiredEvent -> {
                         intent?.getIntExtra("state", 0) == 1
                     }
-                    bluetoothEvent -> {
-                        val state = intent?.getIntExtra(BluetoothProfile.EXTRA_STATE, 0)
-                        if (state == BluetoothProfile.STATE_CONNECTING || state == BluetoothProfile.STATE_DISCONNECTING) {
-                            return
-                        }
-                        state == BluetoothProfile.STATE_CONNECTED
-                    }
+                    // bluetoothEvent -> {
+                    //     // val state = intent?.getIntExtra(BluetoothProfile.EXTRA_STATE, 0)
+                    //     // if (state == BluetoothProfile.STATE_CONNECTING || state == BluetoothProfile.STATE_DISCONNECTING) {
+                    //     //     return
+                    //     // }
+                    //     // state == BluetoothProfile.STATE_CONNECTED
+                    // }
                     else -> null
                 } ?: return
 
-                val event = if (connected) "newDeviceAvailable" else "oldDeviceUnavailable"
+                // val event = if (connected) "newDeviceAvailable" else "oldDeviceUnavailable"
 
-                val deviceName = if (bluetoothEvent) intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)?.name
-                    else intent?.getStringExtra("portName") ?: return
+                // val deviceName = if (bluetoothEvent) intent?.getParcelableExtra<BluetoothDevice>(BluetoothDevice.EXTRA_DEVICE)?.name
+                //     else intent?.getStringExtra("portName") ?: return
 
                 debug("onReceive => connected: $connected\n\tevent: $event\n\tbluetoothEvent: $bluetoothEvent\n\twiredEvent: $wiredEvent\n\tdeviceName: $deviceName")
 
-                if (bluetoothEvent) {
-                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-                }
+                // if (bluetoothEvent) {
+                //     TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+                // }
 
                 debug("onReceive => event: $event, connected: $connected, bluetooth: $bluetoothEvent, wired: $wiredEvent")
-                sendEvent(event, mapOf(
-                        "connected" to connected,
-                        "bluetooth" to bluetoothEvent,
-                        "wired" to wiredEvent,
-                        "deviceName" to deviceName
-                ))
+                // sendEvent(event, mapOf(
+                //         "connected" to connected,
+                //         "bluetooth" to bluetoothEvent,
+                //         "wired" to wiredEvent,
+                //         "deviceName" to deviceName
+                // ))
             }
         }
     }
 
-    fun getProfileProxy(): BluetoothProfile.ServiceListener {
-        debug("getProfileProxy")
-        return bluetoothProfileProxy
-    }
+    // fun getProfileProxy(): BluetoothProfile.ServiceListener {
+    //     debug("getProfileProxy")
+    //     return bluetoothProfileProxy
+    // }
 
     internal fun audioPlayerEventListener(url: String, isPlaying: Boolean) {
         debug("audioPlayerEventListener => url: $url, isPlaying: $isPlaying")
@@ -133,7 +133,7 @@ class AudioNotificationListener() : BaseListener() {
             // BluetoothSco being enabled functions similarly to holding Audio Focus when it comes
             // to external apps audio, if that external app would normally be using the connected
             // bluetooth device. That is, it prevents the external app from resuming playback.
-            TwilioProgrammableVideoPlugin.pluginHandler.setBluetoothSco(false)
+            // TwilioProgrammableVideoPlugin.pluginHandler.setBluetoothSco(false)
         }
 
         // Do not setAudioFocus here if we are Connected, because if we are we presumably already have

@@ -11,6 +11,6 @@ class AudioSettings(speakerEnabled: Boolean = true, bluetoothPreferred: Boolean 
 
     fun reset() {
         speakerEnabled = true
-        bluetoothPreferred = true
+        bluetoothPreferred = false
     }
 }

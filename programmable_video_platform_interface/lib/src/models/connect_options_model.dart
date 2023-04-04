@@ -4,8 +4,6 @@ import 'package:twilio_programmable_video_platform_interface/src/enums/enum_expo
 import 'package:twilio_programmable_video_platform_interface/src/models/model_exports.dart';
 import 'package:twilio_programmable_video_platform_interface/src/video_codecs/video_codec.dart';
 
-import 'model_exports.dart';
-
 class ConnectOptionsModel {
   /// This Access Token is the credential you must use to identify and authenticate your request.
   /// More information about Access Tokens can be found here: https://www.twilio.com/docs/video/tutorials/user-identity-access-tokens
@@ -60,13 +58,21 @@ class ConnectOptionsModel {
     this.enableNetworkQuality,
     this.networkQualityConfiguration,
   })  : assert(accessToken.isNotEmpty),
-        assert((audioTracks != null && audioTracks.isNotEmpty) || audioTracks == null),
-        assert((dataTracks != null && dataTracks.isNotEmpty) || dataTracks == null),
-        assert((preferredAudioCodecs != null && preferredAudioCodecs.isNotEmpty) || preferredAudioCodecs == null),
-        assert((preferredVideoCodecs != null && preferredVideoCodecs.isNotEmpty) || preferredVideoCodecs == null),
-        assert((region != null && region is Region) || region == null),
-        assert((videoTracks != null && videoTracks.isNotEmpty) || videoTracks == null),
-        assert((networkQualityConfiguration != null && networkQualityConfiguration is NetworkQualityConfigurationModel) || networkQualityConfiguration == null);
+        assert((audioTracks != null && audioTracks.isNotEmpty) ||
+            audioTracks == null),
+        assert((dataTracks != null && dataTracks.isNotEmpty) ||
+            dataTracks == null),
+        assert(
+            (preferredAudioCodecs != null && preferredAudioCodecs.isNotEmpty) ||
+                preferredAudioCodecs == null),
+        assert(
+            (preferredVideoCodecs != null && preferredVideoCodecs.isNotEmpty) ||
+                preferredVideoCodecs == null),
+        assert((region != null) || region == null),
+        assert((videoTracks != null && videoTracks.isNotEmpty) ||
+            videoTracks == null),
+        assert((networkQualityConfiguration != null) ||
+            networkQualityConfiguration == null);
 
   /// Create map from properties.
   Map<String, Object> toMap() {
@@ -75,15 +81,33 @@ class ConnectOptionsModel {
         'accessToken': accessToken,
         'roomName': roomName,
         'region': region != null ? EnumToString.convertToString(region) : null,
-        'preferredAudioCodecs': preferredAudioCodecs != null ? Map<String, String>.fromIterable(preferredAudioCodecs!.map<String>((AudioCodec a) => a.name)) : null,
-        'preferredVideoCodecs': preferredVideoCodecs != null ? Map<String, String>.fromIterable(preferredVideoCodecs!.map<String>((VideoCodec v) => v.name)) : null,
-        'audioTracks': audioTracks != null ? Map<Object, Object>.fromIterable(audioTracks!.map<Map<String, Object?>>((TrackModel a) => a.toMap())) : null,
-        'dataTracks': dataTracks != null ? Map<Object, Object>.fromIterable(dataTracks!.map<Map<String, Object>>((LocalDataTrackModel d) => d.toMap())) : null,
-        'videoTracks': videoTracks != null ? Map<Object, Object>.fromIterable(videoTracks!.map<Map<String, Object?>>((LocalVideoTrackModel v) => v.toMap())) : null,
+        'preferredAudioCodecs': preferredAudioCodecs != null
+            ? Map<String, String>.fromIterable(
+                preferredAudioCodecs!.map<String>((AudioCodec a) => a.name))
+            : null,
+        'preferredVideoCodecs': preferredVideoCodecs != null
+            ? Map<String, String>.fromIterable(
+                preferredVideoCodecs!.map<String>((VideoCodec v) => v.name))
+            : null,
+        'audioTracks': audioTracks != null
+            ? Map<Object, Object>.fromIterable(audioTracks!
+                .map<Map<String, Object?>>((TrackModel a) => a.toMap()))
+            : null,
+        'dataTracks': dataTracks != null
+            ? Map<Object, Object>.fromIterable(dataTracks!
+                .map<Map<String, Object>>((LocalDataTrackModel d) => d.toMap()))
+            : null,
+        'videoTracks': videoTracks != null
+            ? Map<Object, Object>.fromIterable(videoTracks!
+                .map<Map<String, Object?>>(
+                    (LocalVideoTrackModel v) => v.toMap()))
+            : null,
         'enableDominantSpeaker': enableDominantSpeaker,
         'enableAutomaticSubscription': enableAutomaticSubscription,
         'enableNetworkQuality': enableNetworkQuality,
-        'networkQualityConfiguration': networkQualityConfiguration != null ? networkQualityConfiguration!.toMap() : null
+        'networkQualityConfiguration': networkQualityConfiguration != null
+            ? networkQualityConfiguration!.toMap()
+            : null
       },
     };
   }

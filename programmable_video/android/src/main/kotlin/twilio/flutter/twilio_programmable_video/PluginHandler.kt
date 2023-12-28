@@ -414,22 +414,22 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("on"), null)
 
         audioSettings.speakerEnabled = on
-        // setSpeakerPhoneOnInternal()
+        setSpeakerPhoneOnInternal()
 
-        // if (!audioSettings.speakerEnabled && audioSettings.bluetoothPreferred) {
-           // applyBluetoothSettings()
-        // }
+        if (!audioSettings.speakerEnabled && audioSettings.bluetoothPreferred) {
+           applyBluetoothSettings()
+        }
         return result.success(audioSettings.speakerEnabled)
     }
 
        private fun setSpeakerPhoneOnInternal() {
-           // val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-           // var bluetoothProfileConnectionState: Int? = null
-           // if (adapter != null) {
-               // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
-           // }
+           val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+           var bluetoothProfileConnectionState: Int? = null
+           if (adapter != null) {
+               bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+           }
 
-            //    debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
+            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
 
            // Even if already enabled, setting `audioManager.isSpeakerphoneOn` to true
            // will reroute audio to the speaker. If using a Bluetooth headset, this will cause audio to
@@ -440,10 +440,10 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            // resulting in an edge case where audio will be routed via the receiver rather than the
            // bottom speaker.
 
-           // if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-           //    bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
-           //    applySpeakerPhoneSettings()
-           // }
+           if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
+              bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+              applySpeakerPhoneSettings()
+           }
     }
 
     internal fun applySpeakerPhoneSettings() {

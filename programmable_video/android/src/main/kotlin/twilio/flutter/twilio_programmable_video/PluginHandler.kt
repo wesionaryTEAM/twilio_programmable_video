@@ -338,11 +338,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private fun setAudioSettings(call: MethodCall, result: MethodChannel.Result) {
         val speakerphoneEnabled = call.argument<Boolean>("speakerphoneEnabled")
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("speakerphoneEnabled"), null)
-        val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
+        // val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("bluetoothPreferred"), null)
 
         audioSettings.speakerEnabled = speakerphoneEnabled
-        audioSettings.bluetoothPreferred = bluetoothPreferred
+        // audioSettings.bluetoothPreferred = bluetoothPreferred
 
         TwilioProgrammableVideoPlugin.audioNotificationListener.listenForRouteChanges(applicationContext)
 

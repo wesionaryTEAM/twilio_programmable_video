@@ -417,7 +417,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         setSpeakerPhoneOnInternal()
 
         if (!audioSettings.speakerEnabled && audioSettings.bluetoothPreferred) {
-            applyBluetoothSettings()
+           applyBluetoothSettings()
         }
         return result.success(audioSettings.speakerEnabled)
     }
@@ -426,7 +426,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
            var bluetoothProfileConnectionState: Int? = null
            if (adapter != null) {
-               bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+              // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
            }
 
            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
@@ -441,8 +441,8 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            // bottom speaker.
 
            if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-               bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
-               applySpeakerPhoneSettings()
+             bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+             applySpeakerPhoneSettings()
            }
     }
 

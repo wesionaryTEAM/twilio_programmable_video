@@ -2,7 +2,7 @@ group 'twilio.flutter.twilio_programmable_video'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '1.6.10'
+    ext.kotlin_version = '1.8.0'
     ext.twilio_video_version = '7.6.4'
     repositories {
         google()
@@ -24,7 +24,7 @@ rootProject.allprojects {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-parcelize'
 
 android {
     compileSdkVersion 31
@@ -44,6 +44,10 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+     buildFeatures {
+        viewBinding true
+    }
+
 }
 
 dependencies {

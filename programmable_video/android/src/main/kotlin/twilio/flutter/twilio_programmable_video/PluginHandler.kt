@@ -338,11 +338,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private fun setAudioSettings(call: MethodCall, result: MethodChannel.Result) {
         val speakerphoneEnabled = call.argument<Boolean>("speakerphoneEnabled")
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("speakerphoneEnabled"), null)
-        // val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
+        val bluetoothPreferred = call.argument<Boolean>("bluetoothPreferred")
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("bluetoothPreferred"), null)
 
         audioSettings.speakerEnabled = speakerphoneEnabled
-        // audioSettings.bluetoothPreferred = bluetoothPreferred
+        audioSettings.bluetoothPreferred = bluetoothPreferred
 
         TwilioProgrammableVideoPlugin.audioNotificationListener.listenForRouteChanges(applicationContext)
 
@@ -426,7 +426,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
            var bluetoothProfileConnectionState: Int? = null
            if (adapter != null) {
-               bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+              // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
            }
 
            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")

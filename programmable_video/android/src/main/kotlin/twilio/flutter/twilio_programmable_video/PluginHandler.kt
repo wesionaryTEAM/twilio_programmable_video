@@ -429,7 +429,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
            }
 
-            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
+           debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
 
            // Even if already enabled, setting `audioManager.isSpeakerphoneOn` to true
            // will reroute audio to the speaker. If using a Bluetooth headset, this will cause audio to
@@ -441,8 +441,8 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            // bottom speaker.
 
            if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-              bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
-              applySpeakerPhoneSettings()
+             bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+             applySpeakerPhoneSettings()
            }
     }
 

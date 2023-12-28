@@ -414,7 +414,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 ?: return result.error("MISSING_PARAMS", missingParameterMessage("on"), null)
 
         audioSettings.speakerEnabled = on
-        setSpeakerPhoneOnInternal()
+        // setSpeakerPhoneOnInternal()
 
         // if (!audioSettings.speakerEnabled && audioSettings.bluetoothPreferred) {
            // applyBluetoothSettings()
@@ -429,7 +429,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
            // }
 
-           debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
+            //    debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
 
            // Even if already enabled, setting `audioManager.isSpeakerphoneOn` to true
            // will reroute audio to the speaker. If using a Bluetooth headset, this will cause audio to

@@ -13,7 +13,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  permission_handler: ^10.2.0
+  permission_handler: ^11.3.1
   enum_to_string: ^2.0.1
   twilio_programmable_video_platform_interface:
     git:
@@ -29,7 +29,7 @@ dev_dependencies:
 # https://github.com/flutter/flutter/issues/48246
   pedantic: ^1.11.0
   mockito: ^5.0.6
-  build_runner: ^2.0.1
+  build_runner: ^2.4.9
 
 dependency_overrides:
   pedantic: ^1.9.0

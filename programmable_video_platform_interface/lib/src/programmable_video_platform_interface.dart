@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 import 'package:twilio_programmable_video_platform_interface/src/camera_source.dart';
-import 'package:twilio_programmable_video_platform_interface/src/models/capturers/camera_event.dart';
 
 import 'method_channel_programmable_video.dart';
 import 'models/model_exports.dart';
@@ -73,7 +72,8 @@ abstract class ProgrammableVideoPlatform extends PlatformInterface {
   /// Calls native code to reset the speaker and bluetooth settings to their default values.
   /// The native layer will stop observing and managing changes to audio state.
   Future disableAudioSettings() {
-    throw UnimplementedError('disableAudioSettings() has not been implemented.');
+    throw UnimplementedError(
+        'disableAudioSettings() has not been implemented.');
   }
 
   /// Calls native code to check if speaker mode is enabled.
@@ -122,12 +122,14 @@ abstract class ProgrammableVideoPlatform extends PlatformInterface {
 
   /// Calls native code to enable playback of the RemoteAudioTrack.
   Future<void> enableRemoteAudioTrack(bool enable, String sid) {
-    throw UnimplementedError('enableRemoteAudioTrack() has not been implemented.');
+    throw UnimplementedError(
+        'enableRemoteAudioTrack() has not been implemented.');
   }
 
   /// Calls native code to check if playback is enabled for the RemoteAudioTrack.
   Future<bool?> isRemoteAudioTrackPlaybackEnabled(String sid) {
-    throw UnimplementedError('isRemoteAudioTrackPlaybackEnabled() has not been implemented.');
+    throw UnimplementedError(
+        'isRemoteAudioTrackPlaybackEnabled() has not been implemented.');
   }
 
   /// Calls native code for retrieving the different camera sources available.
@@ -142,7 +144,8 @@ abstract class ProgrammableVideoPlatform extends PlatformInterface {
 
   /// Calls native code to change the torch state.
   Future<void> setTorch(bool enabled) {
-    throw UnimplementedError('setTorch(bool enabled) has not been implemented.');
+    throw UnimplementedError(
+        'setTorch(bool enabled) has not been implemented.');
   }
 
   //#endregion
@@ -167,28 +170,32 @@ abstract class ProgrammableVideoPlatform extends PlatformInterface {
   ///
   /// This stream is used to update the RemoteParticipants in a plugin implementation.
   Stream<BaseRemoteParticipantEvent>? remoteParticipantStream(int internalId) {
-    throw UnimplementedError('remoteParticipantStream() has not been implemented');
+    throw UnimplementedError(
+        'remoteParticipantStream() has not been implemented');
   }
 
   /// Stream of the BaseLocalParticipantEvent model.
   ///
   /// This stream is used to update the LocalParticipant in a plugin implementation.
   Stream<BaseLocalParticipantEvent>? localParticipantStream(int internalId) {
-    throw UnimplementedError('localParticipantStream() has not been implemented');
+    throw UnimplementedError(
+        'localParticipantStream() has not been implemented');
   }
 
   /// Stream of the BaseRemoteDataTrackEvent model.
   ///
   /// This stream is used to update the RemoteDataTrack in a plugin implementation.
   Stream<BaseRemoteDataTrackEvent>? remoteDataTrackStream(int internalId) {
-    throw UnimplementedError('remoteDataTrackStream() has not been implemented');
+    throw UnimplementedError(
+        'remoteDataTrackStream() has not been implemented');
   }
 
   /// Stream of the BaseRemoteDataTrackEvent model.
   ///
   /// This stream is used to update the RemoteDataTrack in a plugin implementation.
   Stream<BaseAudioNotificationEvent> audioNotificationStream() {
-    throw UnimplementedError('audioNotificationStream() has not been implemented');
+    throw UnimplementedError(
+        'audioNotificationStream() has not been implemented');
   }
 
   /// Stream of dynamic that contains all the native logging output.

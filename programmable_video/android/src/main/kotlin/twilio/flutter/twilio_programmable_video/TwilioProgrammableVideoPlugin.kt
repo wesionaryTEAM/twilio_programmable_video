@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.annotation.NonNull
+import com.twilio.video.LocalVideoTrack
 import com.twilio.video.Video
 import com.twilio.video.VideoCapturer
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -72,6 +73,8 @@ class TwilioProgrammableVideoPlugin : FlutterPlugin {
                 "FP2", // Fairphone FP2
                 "MI 5"
         )
+
+        val localVideoTracks = mutableMapOf<String, LocalVideoTrack>()
 
         lateinit var pluginHandler: PluginHandler
 

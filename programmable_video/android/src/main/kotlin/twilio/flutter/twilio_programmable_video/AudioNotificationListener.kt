@@ -25,14 +25,14 @@ class AudioNotificationListener() : BaseListener() {
         }
 
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-            debug("onServiceConnected => profile: $profile, proxy: $proxy")
-//            if (profile == BluetoothProfile.HEADSET) {
-//                bluetoothProfile = proxy
-//                if (bluetoothProfile!!.connectedDevices.size > 0 &&
-//                    TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-//                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-//                }
-//            }
+        //    debug("onServiceConnected => profile: $profile, proxy: $proxy")
+        //    if (profile == BluetoothProfile.HEADSET) {
+        //        bluetoothProfile = proxy
+        //        if (bluetoothProfile!!.connectedDevices.size > 0 &&
+        //            TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+        //            TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+        //        }
+        //    }
         }
     }
 

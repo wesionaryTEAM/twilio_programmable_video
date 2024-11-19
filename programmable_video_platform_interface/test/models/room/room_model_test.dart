@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:twilio_programmable_video_platform_interface/src/enums/enum_exports.dart';
-import 'package:twilio_programmable_video_platform_interface/src/enums/region.dart';
 import 'package:twilio_programmable_video_platform_interface/src/models/model_exports.dart';
 
 import '../model_instances.dart';

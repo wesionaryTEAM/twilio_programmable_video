@@ -42,8 +42,6 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import tvi.webrtc.voiceengine.WebRtcAudioUtils
-import android.bluetooth.BluetoothManager
-import android.content.Context
 
 class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private val TAG = "PluginHandler"
@@ -425,9 +423,12 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
     private fun setSpeakerPhoneOnInternal() {
-        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
-        val adapter = bluetoothManager?.adapter
-        val bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+        val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+        var bluetoothProfileConnectionState: Int? = null
+    
+        if (adapter != null) {
+            bluetoothProfileConnectionState = adapter.getProfileConnectionState(BluetoothProfile.HEADSET)
+        }
     
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +
                 "bluetoothEnable: ${audioSettings.bluetoothPreferred}\n" +
@@ -439,7 +440,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             applySpeakerPhoneSettings()
         }
     }
-    
     
 
     internal fun applySpeakerPhoneSettings() {

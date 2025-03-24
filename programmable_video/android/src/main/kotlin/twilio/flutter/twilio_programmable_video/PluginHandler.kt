@@ -428,8 +428,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     
         if (adapter != null) {
             bluetoothProfileConnectionState = adapter.getProfileConnectionState(BluetoothProfile.HEADSET)
-        } else {
-            Log.e("BluetoothError", "Bluetooth is not supported or is disabled on this device.")
         }
     
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +

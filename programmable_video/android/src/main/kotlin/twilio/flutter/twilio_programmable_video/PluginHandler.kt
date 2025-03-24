@@ -423,12 +423,9 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
     private fun setSpeakerPhoneOnInternal() {
-        val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-        var bluetoothProfileConnectionState: Int? = null
-    
-        if (adapter != null) {
-            bluetoothProfileConnectionState = adapter.getProfileConnectionState(BluetoothProfile.HEADSET)
-        }
+        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as? BluetoothManager
+        val adapter = bluetoothManager?.adapter
+        val bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
     
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +
                 "bluetoothEnable: ${audioSettings.bluetoothPreferred}\n" +
@@ -440,6 +437,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             applySpeakerPhoneSettings()
         }
     }
+    
     
 
     internal fun applySpeakerPhoneSettings() {

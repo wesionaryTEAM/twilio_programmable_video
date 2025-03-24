@@ -422,29 +422,27 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         return result.success(audioSettings.speakerEnabled)
     }
 
-       private fun setSpeakerPhoneOnInternal() {
-           val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
-           var bluetoothProfileConnectionState: Int? = null
-           if (adapter != null) {
-              // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
-           }
-
-           debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
-
-           // Even if already enabled, setting `audioManager.isSpeakerphoneOn` to true
-           // will reroute audio to the speaker. If using a Bluetooth headset, this will cause audio to
-           // momentarily be routed to the device bottom speaker.
-           //
-           // It has been observed when disconnecting a bluetooth headset that sometimes
-           // the bluetoothProfileConnectionState will still be BluetoothProfile.STATE_CONNECTED
-           // resulting in an edge case where audio will be routed via the receiver rather than the
-           // bottom speaker.
-
-           if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-             bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
-             applySpeakerPhoneSettings()
-           }
+    private fun setSpeakerPhoneOnInternal() {
+        val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+        var bluetoothProfileConnectionState: Int? = null
+    
+        if (adapter != null) {
+            bluetoothProfileConnectionState = adapter.getProfileConnectionState(BluetoothProfile.HEADSET)
+        } else {
+            Log.e("BluetoothError", "Bluetooth is not supported or is disabled on this device.")
+        }
+    
+        debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +
+                "bluetoothEnable: ${audioSettings.bluetoothPreferred}\n" +
+                "bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n" +
+                "bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
+    
+        if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
+            bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+            applySpeakerPhoneSettings()
+        }
     }
+    
 
     internal fun applySpeakerPhoneSettings() {
         debug("applySpeakerPhoneSettings => enabled: ${audioSettings.speakerEnabled}")

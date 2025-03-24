@@ -3,6 +3,7 @@ package twilio.flutter.twilio_programmable_video
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
@@ -423,11 +424,17 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
     private fun setSpeakerPhoneOnInternal() {
-        val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+        val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        val adapter: BluetoothAdapter? = bluetoothManager.adapter
         var bluetoothProfileConnectionState: Int? = null
     
         if (adapter != null) {
-            bluetoothProfileConnectionState = adapter.getProfileConnectionState(BluetoothProfile.HEADSET)
+            val connectedDevices = bluetoothManager.getConnectedDevices(BluetoothProfile.HEADSET)
+            bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
+                BluetoothProfile.STATE_CONNECTED
+            } else {
+                BluetoothProfile.STATE_DISCONNECTED
+            }
         }
     
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +

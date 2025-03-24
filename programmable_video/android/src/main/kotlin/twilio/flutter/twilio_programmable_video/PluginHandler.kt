@@ -42,6 +42,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import tvi.webrtc.voiceengine.WebRtcAudioUtils
+import android.bluetooth.BluetoothManager
+import android.content.Context
 
 class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private val TAG = "PluginHandler"

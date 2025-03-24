@@ -426,7 +426,10 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
            val adapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
            var bluetoothProfileConnectionState: Int? = null
            if (adapter != null) {
-              // bluetoothProfileConnectionState = adapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+            val bluetoothProfileConnectionState = bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.HEADSET)
+            ?: BluetoothProfile.STATE_DISCONNECTED
+           } else {
+            Log.e("BluetoothError", "Bluetooth is not supported or is disabled on this device.")
            }
 
            debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n bluetoothEnable: ${audioSettings.bluetoothPreferred}\n bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n bluetoothProfileConnectionState: $bluetoothProfileConnectionState")

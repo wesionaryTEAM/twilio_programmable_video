@@ -395,9 +395,10 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 setBluetoothSco(audioSettings.bluetoothPreferred)
                 if (audioSettings.bluetoothPreferred) {
                     audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                    audioManager.isBluetoothScoOn = true
                     audioManager.startBluetoothSco()
-                    debug("applyBluetoothSettings END => on: ${audioSettings.bluetoothPreferred} scoOn: ${audioManager.isBluetoothScoOn}")
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        debug("applyBluetoothSettings END => scoOn: ${audioManager.isBluetoothScoOn}")
+                    }, 2000) // Delay to allow SCO connection to stabilize
                 }
             }, 1000)
         }

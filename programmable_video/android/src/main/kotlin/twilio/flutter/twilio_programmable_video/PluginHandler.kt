@@ -441,7 +441,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                         val connectedDevices = proxy.connectedDevices
                         debug("Connected Bluetooth Devices: $connectedDevices")
                         bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
-                            debug("BluetoothProfile.STATE_CONNECTED $BluetoothProfile.STATE_CONNECTED")
+                            debug("BluetoothProfile.STATE_CONNECTED")
                             BluetoothProfile.STATE_CONNECTED
                         } else {
                             debug("BluetoothProfile.STATE_DISCONNECTED")

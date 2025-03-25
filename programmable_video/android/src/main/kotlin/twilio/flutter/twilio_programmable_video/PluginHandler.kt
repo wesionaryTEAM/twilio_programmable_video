@@ -389,11 +389,16 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 "\tscoOn: ${audioManager.isBluetoothScoOn}\n" +
                 "\tconnected: $isConnected\n" +
                 "\tanyPlaying: $anyPlaying")
+
         if (isConnected || anyPlaying) {
             Handler(Looper.getMainLooper()).postDelayed({
                 setBluetoothSco(audioSettings.bluetoothPreferred)
-                audioManager.isBluetoothScoOn = audioSettings.bluetoothPreferred
-                debug("applyBluetoothSettings END => on: ${audioSettings.bluetoothPreferred} scoOn: ${audioManager.isBluetoothScoOn}")
+                if (audioSettings.bluetoothPreferred) {
+                    audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                    audioManager.isBluetoothScoOn = true
+                    audioManager.startBluetoothSco()
+                    debug("applyBluetoothSettings END => on: ${audioSettings.bluetoothPreferred} scoOn: ${audioManager.isBluetoothScoOn}")
+                }
             }, 1000)
         }
     }
@@ -433,6 +438,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                 override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
                     if (profile == BluetoothProfile.HEADSET) {
                         val connectedDevices = proxy.connectedDevices
+                        debug("Connected Bluetooth Devices: $connectedDevices")
                         bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
                             BluetoothProfile.STATE_CONNECTED
                         } else {

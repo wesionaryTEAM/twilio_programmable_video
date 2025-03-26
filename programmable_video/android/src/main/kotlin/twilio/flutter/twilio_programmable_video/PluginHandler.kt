@@ -1,5 +1,8 @@
 package twilio.flutter.twilio_programmable_video
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile
@@ -429,6 +432,14 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             if (!audioSettings.bluetoothPreferred) {
                 applySpeakerPhoneSettings()
             } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+                ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.BLUETOOTH_CONNECT)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                debug("BLUETOOTH_CONNECT permission not granted, falling back to speakerphone")
+                applySpeakerPhoneSettings()
+                return
+            }
                 // Use AudioManager to enable Bluetooth SCO
                 if (audioManager.isBluetoothScoAvailableOffCall) {
                     debug("Bluetooth SCO is available, starting SCO")

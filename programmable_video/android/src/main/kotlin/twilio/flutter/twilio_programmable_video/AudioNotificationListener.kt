@@ -1,17 +1,22 @@
 package twilio.flutter.twilio_programmable_video
 
 import android.Manifest
-import android.content.pm.PackageManager
-import androidx.core.content.ContextCompat
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHeadset
+import android.bluetooth.BluetoothManager
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import androidx.core.content.ContextCompat
+
 
 class AudioNotificationListener() : BaseListener() {
     private val TAG = "AudioNotificationListener"

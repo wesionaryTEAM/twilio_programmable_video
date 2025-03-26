@@ -134,7 +134,7 @@ class AudioNotificationListener() : BaseListener() {
             // BluetoothSco being enabled functions similarly to holding Audio Focus when it comes
             // to external apps audio, if that external app would normally be using the connected
             // bluetooth device. That is, it prevents the external app from resuming playback.
-            TwilioProgrammableVideoPlugin.pluginHandler.setBluetoothSco(true)
+            TwilioProgrammableVideoPlugin.pluginHandler.setBluetoothSco(false)
         }
 
         // Do not setAudioFocus here if we are Connected, because if we are we presumably already have

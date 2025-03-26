@@ -18,7 +18,7 @@ import android.os.Looper
 import androidx.core.content.ContextCompat
 
 
-class AudioNotificationListener() : BaseListener() {
+class AudioNotificationListener(private val context: Context) : BaseListener() {
     private val TAG = "AudioNotificationListener"
     private val intentFilter: IntentFilter = IntentFilter()
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
@@ -31,16 +31,16 @@ class AudioNotificationListener() : BaseListener() {
                 TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
             }
         }
-    
+
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             debug("onServiceConnected => profile: $profile, proxy: $proxy")
             if (profile == BluetoothProfile.HEADSET) {
                 bluetoothProfile = proxy
-    
+
                 // Safely access connected devices only if permission is granted
                 val connectedDevices = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
                     ContextCompat.checkSelfPermission(
-                        applicationContext,
+                        context,
                         Manifest.permission.BLUETOOTH_CONNECT
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
@@ -49,9 +49,9 @@ class AudioNotificationListener() : BaseListener() {
                     debug("BLUETOOTH_CONNECT permission not granted — skipping Bluetooth check.")
                     emptyList()
                 }
-    
+
                 debug("Connected Bluetooth Devices: $connectedDevices")
-    
+
                 if (connectedDevices.isNotEmpty() &&
                     TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred
                 ) {
@@ -60,36 +60,23 @@ class AudioNotificationListener() : BaseListener() {
             }
         }
     }
-    
 
     var bluetoothProfile: BluetoothProfile? = null
 
     private val receiver: BroadcastReceiver = getBroadcastReceiver()
 
     init {
-        // https://developer.android.com/reference/android/media/AudioManager#ACTION_HEADSET_PLUG
         intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG)
-        // https://developer.android.com/reference/android/bluetooth/BluetoothHeadset#ACTION_CONNECTION_STATE_CHANGED
         intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
-
-        // Other actions we could listen for:
-        // 1. AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED
-        //      https://developer.android.com/reference/android/media/AudioManager#ACTION_SCO_AUDIO_STATE_UPDATED
-        // to handle changes in the BluetoothSco state
-
-        // 2. BluetoothAdapter.ACTION_STATE_CHANGED
-        //      https://developer.android.com/reference/android/bluetooth/BluetoothAdapter#ACTION_STATE_CHANGED
-        // to handle Bluetooth being toggled at the OS level, but the BluetoothProfile.ServiceListener above
-        // also fills that role.
     }
 
-    fun listenForRouteChanges(context: Context) {
+    fun listenForRouteChanges() {
         debug("listenForRouteChanges")
         context.registerReceiver(receiver, intentFilter)
         BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
     }
 
-    fun stopListeningForRouteChanges(context: Context) {
+    fun stopListeningForRouteChanges() {
         debug("stopListeningForRouteChanges")
         context.unregisterReceiver(receiver)
         BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)

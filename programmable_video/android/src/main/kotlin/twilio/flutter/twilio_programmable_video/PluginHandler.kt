@@ -1,5 +1,6 @@
 package twilio.flutter.twilio_programmable_video
 
+import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile
@@ -428,6 +429,12 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         if (!audioSettings.bluetoothPreferred) {
             applySpeakerPhoneSettings()
         } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
+            ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            debug("BLUETOOTH_CONNECT permission not granted")
+            return
+        }
+
             val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
             val adapter: BluetoothAdapter? = bluetoothManager.adapter
     

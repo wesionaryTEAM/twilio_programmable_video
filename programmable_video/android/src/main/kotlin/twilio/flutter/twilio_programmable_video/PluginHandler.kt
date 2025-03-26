@@ -442,6 +442,8 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                         debug("Connected Bluetooth Devices: $connectedDevices")
                         bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
                             debug("BluetoothProfile.STATE_CONNECTED")
+                            audioManager.startBluetoothSco()
+                            audioManager.isBluetoothScoOn = true
                             BluetoothProfile.STATE_CONNECTED
                         } else {
                             debug("BluetoothProfile.STATE_DISCONNECTED")

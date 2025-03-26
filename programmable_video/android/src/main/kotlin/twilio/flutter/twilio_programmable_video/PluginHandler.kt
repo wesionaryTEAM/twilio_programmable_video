@@ -427,7 +427,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private fun setSpeakerPhoneOnInternal() {
         val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val adapter: BluetoothAdapter? = bluetoothManager.adapter
-        var bluetoothProfileConnectionState: Int? = null
 
         if (adapter != null) {
             adapter.getProfileProxy(applicationContext, object : BluetoothProfile.ServiceListener {
@@ -435,15 +434,14 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                     if (profile == BluetoothProfile.HEADSET) {
                         val connectedDevices = proxy.connectedDevices
                         debug("Connected Bluetooth Devices: $connectedDevices")
-                        bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
+                         if (connectedDevices.isNotEmpty()) {
                             debug("BluetoothProfile.STATE_CONNECTED")
                             audioManager.isBluetoothScoOn = true
-                            audioManager.startBluetoothSco()
+                            audioManager.startBluetoothSco()                 
                             
-                            BluetoothProfile.STATE_CONNECTED
                         } else {
-                            debug("BluetoothProfile.STATE_DISCONNECTED")
-                            BluetoothProfile.STATE_DISCONNECTED
+                            debug("BluetoothProfile.STATE_DISCONNECTED")                         
+                            audioManager.isBluetoothScoOn = false
                         }
                         adapter.closeProfileProxy(BluetoothProfile.HEADSET, proxy)
                     }
@@ -451,7 +449,8 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
                 override fun onServiceDisconnected(profile: Int) {
                     if (profile == BluetoothProfile.HEADSET) {
-                        bluetoothProfileConnectionState = BluetoothProfile.STATE_DISCONNECTED
+                         audioManager.isBluetoothScoOn = false
+                         BluetoothProfile.STATE_DISCONNECTED
                     }
                 }
             }, BluetoothProfile.HEADSET)
@@ -459,11 +458,9 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +
                 "bluetoothEnable: ${audioSettings.bluetoothPreferred}\n" +
-                "bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n" +
-                "bluetoothProfileConnectionState: $bluetoothProfileConnectionState")
+                "bluetoothScoOn: ${audioManager.isBluetoothScoOn}\n")
 
-        if (bluetoothProfileConnectionState == null || !audioSettings.bluetoothPreferred ||
-            bluetoothProfileConnectionState != BluetoothProfile.STATE_CONNECTED) {
+        if (!audioSettings.bluetoothPreferred) {
             applySpeakerPhoneSettings()
         }
     }

@@ -1,6 +1,5 @@
 package twilio.flutter.twilio_programmable_video
 
-import android.Manifest
 import android.app.Activity
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothProfile

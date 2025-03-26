@@ -60,12 +60,30 @@ class AudioNotificationListener() : BaseListener() {
 
     fun listenForRouteChanges(context: Context) {
         debug("listenForRouteChanges")
+
+        // Do nothing if Bluetooth is not preferred
+        if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+            debug("Bluetooth not preferred, skipping Bluetooth setup")
+            TwilioProgrammableVideoPlugin.pluginHandler.applySpeakerPhoneSettings()
+            return
+        }
+
+        // Register the receiver and listen for Bluetooth events
         context.registerReceiver(receiver, intentFilter)
         BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+        debug("Listening for Bluetooth route changes")
     }
 
     fun stopListeningForRouteChanges(context: Context) {
         debug("stopListeningForRouteChanges")
+
+        // Do nothing if Bluetooth is not preferred
+        if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+            debug("Bluetooth not preferred, no need to stop Bluetooth services")
+            return
+        }
+
+        // Unregister the receiver and close the Bluetooth profile proxy
         context.unregisterReceiver(receiver)
         BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
     }
@@ -74,6 +92,12 @@ class AudioNotificationListener() : BaseListener() {
         debug("getBroadcastReceiver")
         return object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                // Skip Bluetooth-related logic if Bluetooth is not preferred
+                if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                    debug("Bluetooth not preferred, ignoring Bluetooth events")
+                    return
+                }
+
                 val wiredEvent = intent?.action.equals(AudioManager.ACTION_HEADSET_PLUG)
                 val bluetoothEvent = intent?.action.equals(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
 

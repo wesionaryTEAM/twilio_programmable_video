@@ -508,7 +508,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         TwilioProgrammableVideoPlugin.roomListener.room = null
         debug("disconnect => audioPlayers active: ${TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()}")
         if (!TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()) {
-            setBluetoothSco(true)
+            setBluetoothSco(false)
             setAudioFocus(false)
         }
         result.success(true)

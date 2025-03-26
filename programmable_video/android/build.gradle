@@ -53,4 +53,5 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "com.twilio:video-android:$twilio_video_version"
+    implementation "com.twilio:audioswitch:1.1.8"
 }

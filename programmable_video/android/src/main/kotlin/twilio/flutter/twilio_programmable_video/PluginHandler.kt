@@ -43,6 +43,8 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import tvi.webrtc.voiceengine.WebRtcAudioUtils
+import com.twilio.audioswitch.AudioSwitch
+import com.twilio.audioswitch.selection.AudioDevice
 
 class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private val TAG = "PluginHandler"
@@ -63,10 +65,18 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     internal var audioSettings: AudioSettings = AudioSettings()
 
+    private lateinit var audioSwitch: AudioSwitch
+
     @Suppress("ConvertSecondaryConstructorToPrimary")
     constructor(applicationContext: Context) {
         this.applicationContext = applicationContext
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        // Initialize AudioSwitch
+        audioSwitch = AudioSwitch(applicationContext)
+        audioSwitch.start { audioDevices, selectedDevice ->
+            debug("AudioSwitch::Available devices: $audioDevices, Selected device: $selectedDevice")
+        }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -364,43 +374,30 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     private fun disableAudioSettings(call: MethodCall, result: MethodChannel.Result) {
         TwilioProgrammableVideoPlugin.audioNotificationListener.stopListeningForRouteChanges(applicationContext)
         audioSettings.reset()
+
+        // Stop AudioSwitch
+        audioSwitch.stop()
+
         result.success(null)
     }
 
     internal fun applyAudioSettings() {
         debug("applyAudioSettings")
-        setSpeakerPhoneOnInternal()
 
-        if (!audioSettings.speakerEnabled) {
-            applyBluetoothSettings()
+        val preferredDevice: Class<out AudioDevice>? = when {
+            audioSettings.bluetoothPreferred -> AudioDevice.BluetoothHeadset::class.java
+            audioSettings.speakerEnabled -> AudioDevice.Speakerphone::class.java
+            else -> AudioDevice.Earpiece::class.java
         }
-    }
 
-    // BluetoothSco being enabled functions similarly to holding Audio Focus when it comes
-    // to external apps audio, if that external app would normally be using the connected
-    // bluetooth device. That is, it prevents the external app from continuing or resuming playback.
-    //
-    // Given this, we only want to turn BluetoothSco on when we are actually using the audio system.
-    internal fun applyBluetoothSettings() {
-        val isConnected = TwilioProgrammableVideoPlugin.isConnected()
-        val anyPlaying = TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()
-        debug("applyBluetoothSettings BEGIN =>\n" +
-                "\ton: ${audioSettings.bluetoothPreferred}\n" +
-                "\tscoOn: ${audioManager.isBluetoothScoOn}\n" +
-                "\tconnected: $isConnected\n" +
-                "\tanyPlaying: $anyPlaying")
+        val availableDevices = audioSwitch.availableAudioDevices
+        val selectedDevice = availableDevices.firstOrNull { it::class.java == preferredDevice }
 
-        if (isConnected || anyPlaying) {
-            Handler(Looper.getMainLooper()).postDelayed({
-                setBluetoothSco(audioSettings.bluetoothPreferred)
-                if (audioSettings.bluetoothPreferred) {
-                    audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                    audioManager.startBluetoothSco()
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        debug("applyBluetoothSettings END => scoOn: ${audioManager.isBluetoothScoOn}")
-                    }, 2000) // Delay to allow SCO connection to stabilize
-                }
-            }, 1000)
+        if (selectedDevice != null) {
+            audioSwitch.selectDevice(selectedDevice)
+            debug("applyAudioSettings => Selected device: $selectedDevice")
+        } else {
+            debug("applyAudioSettings => Preferred device not available, using default.")
         }
     }
 

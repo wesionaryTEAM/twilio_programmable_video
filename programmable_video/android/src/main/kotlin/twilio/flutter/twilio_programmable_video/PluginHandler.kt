@@ -392,7 +392,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
         if (isConnected || anyPlaying) {
             Handler(Looper.getMainLooper()).postDelayed({
-                setBluetoothSco(audioSettings.bluetoothPreferred)
+                setBluetoothSco(true)
                 if (audioSettings.bluetoothPreferred) {
                     audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                     audioManager.startBluetoothSco()
@@ -442,8 +442,9 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                         debug("Connected Bluetooth Devices: $connectedDevices")
                         bluetoothProfileConnectionState = if (connectedDevices.isNotEmpty()) {
                             debug("BluetoothProfile.STATE_CONNECTED")
-                            audioManager.startBluetoothSco()
                             audioManager.isBluetoothScoOn = true
+                            audioManager.startBluetoothSco()
+                            
                             BluetoothProfile.STATE_CONNECTED
                         } else {
                             debug("BluetoothProfile.STATE_DISCONNECTED")
@@ -511,7 +512,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         TwilioProgrammableVideoPlugin.roomListener.room = null
         debug("disconnect => audioPlayers active: ${TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()}")
         if (!TwilioProgrammableVideoPlugin.audioNotificationListener.anyAudioPlayersActive()) {
-            setBluetoothSco(false)
+            setBluetoothSco(true)
             setAudioFocus(false)
         }
         result.success(true)

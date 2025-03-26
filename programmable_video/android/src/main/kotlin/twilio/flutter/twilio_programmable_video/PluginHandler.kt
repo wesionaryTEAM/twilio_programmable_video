@@ -398,7 +398,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
                     }, 1000)
                 }
         }
-    }
 
     internal fun setBluetoothSco(on: Boolean) {
         if (on) {

@@ -1,5 +1,8 @@
 package twilio.flutter.twilio_programmable_video
 
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothHeadset
@@ -23,19 +26,36 @@ class AudioNotificationListener() : BaseListener() {
                 TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
             }
         }
-
+    
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             debug("onServiceConnected => profile: $profile, proxy: $proxy")
             if (profile == BluetoothProfile.HEADSET) {
                 bluetoothProfile = proxy
-                val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
+    
+                // Safely access connected devices only if permission is granted
+                val connectedDevices = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S ||
+                    ContextCompat.checkSelfPermission(
+                        applicationContext,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    bluetoothProfile?.connectedDevices ?: emptyList()
+                } else {
+                    debug("BLUETOOTH_CONNECT permission not granted — skipping Bluetooth check.")
+                    emptyList()
+                }
+    
                 debug("Connected Bluetooth Devices: $connectedDevices")
-                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+    
+                if (connectedDevices.isNotEmpty() &&
+                    TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred
+                ) {
                     TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
                 }
             }
         }
     }
+    
 
     var bluetoothProfile: BluetoothProfile? = null
 

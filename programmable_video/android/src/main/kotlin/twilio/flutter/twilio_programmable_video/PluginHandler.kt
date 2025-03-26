@@ -420,9 +420,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
         audioSettings.speakerEnabled = on
         setSpeakerPhoneOnInternal()
 
-        if (!audioSettings.speakerEnabled && audioSettings.bluetoothPreferred) {
-           applyBluetoothSettings()
-        }
         return result.success(audioSettings.speakerEnabled)
     }
 

@@ -430,13 +430,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
             applySpeakerPhoneSettings()
         } else {
             try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
-                    ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                    debug("BLUETOOTH_CONNECT permission not granted")
-                    applySpeakerPhoneSettings() 
-                    return
-                }
-
                 val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
                 val adapter: BluetoothAdapter? = bluetoothManager.adapter
 

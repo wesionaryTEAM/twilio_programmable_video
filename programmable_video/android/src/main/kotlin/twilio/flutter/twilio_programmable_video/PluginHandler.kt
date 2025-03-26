@@ -425,50 +425,34 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
     private fun setSpeakerPhoneOnInternal() {
-        if (!audioSettings.bluetoothPreferred) {
-            applySpeakerPhoneSettings()
-        } else {
-            try {
-                val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-                val adapter: BluetoothAdapter? = bluetoothManager.adapter
+        try {
+            if (!audioSettings.bluetoothPreferred) {
+                applySpeakerPhoneSettings()
+            } else {
+                // Use AudioManager to enable Bluetooth SCO
+                if (audioManager.isBluetoothScoAvailableOffCall) {
+                    debug("Bluetooth SCO is available, starting SCO")
+                    audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                    audioManager.startBluetoothSco()
+                    audioManager.isBluetoothScoOn = true
 
-                if (adapter != null) {
-                    adapter.getProfileProxy(applicationContext, object : BluetoothProfile.ServiceListener {
-                        override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
-                            if (profile == BluetoothProfile.HEADSET) {
-                                val connectedDevices = proxy.connectedDevices
-                                debug("Connected Bluetooth Devices: $connectedDevices")
-                                if (connectedDevices.isNotEmpty()) {
-                                    debug("BluetoothProfile.STATE_CONNECTED")
-                                    audioManager.isBluetoothScoOn = audioSettings.bluetoothPreferred
-                                    if (audioSettings.bluetoothPreferred) {
-                                        audioManager.startBluetoothSco()
-                                    }
-                                } else {
-                                    debug("BluetoothProfile.STATE_DISCONNECTED")
-                                    audioManager.isBluetoothScoOn = false
-                                    applySpeakerPhoneSettings() 
-                                }
-                                adapter.closeProfileProxy(BluetoothProfile.HEADSET, proxy)
-                            }
+                    // Add a delay to allow SCO connection to stabilize
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        if (audioManager.isBluetoothScoOn) {
+                            debug("Bluetooth SCO is ON, audio routed to Bluetooth Headset")
+                        } else {
+                            debug("Failed to enable Bluetooth SCO, falling back to speakerphone")
+                            applySpeakerPhoneSettings()
                         }
-
-                        override fun onServiceDisconnected(profile: Int) {
-                            if (profile == BluetoothProfile.HEADSET) {
-                                debug("Bluetooth Profile Disconnected")
-                                audioManager.isBluetoothScoOn = false
-                                applySpeakerPhoneSettings() 
-                            }
-                        }
-                    }, BluetoothProfile.HEADSET)
+                    }, 2000) // 2-second delay
+                } else {
+                    debug("Bluetooth SCO is not available, falling back to speakerphone")
+                    applySpeakerPhoneSettings()
                 }
-            } catch (e: SecurityException) {
-                debug("SecurityException: ${e.message}")
-                applySpeakerPhoneSettings() 
-            } catch (e: Exception) {
-                debug("Exception: ${e.message}")
-                applySpeakerPhoneSettings() 
             }
+        } catch (e: Exception) {
+            debug("Exception in setSpeakerPhoneOnInternal: ${e.message}")
+            applySpeakerPhoneSettings() // Fallback to speakerphone
         }
 
         debug("setSpeakerPhoneOnInternal => on: ${audioSettings.speakerEnabled}\n" +
@@ -478,6 +462,7 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     internal fun applySpeakerPhoneSettings() {
         debug("applySpeakerPhoneSettings => enabled: ${audioSettings.speakerEnabled}")
+        audioManager.mode = AudioManager.MODE_NORMAL
         audioManager.isSpeakerphoneOn = audioSettings.speakerEnabled
     }
 

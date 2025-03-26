@@ -67,10 +67,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     constructor(applicationContext: Context) {
         this.applicationContext = applicationContext
         audioManager = applicationContext.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-        // Register the Bluetooth receiver
-        val filter = IntentFilter(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
-        applicationContext.registerReceiver(bluetoothReceiver, filter)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -83,7 +79,6 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     override fun onDetachedFromActivity() {
         this.activity = null
-        applicationContext.unregisterReceiver(bluetoothReceiver)
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
@@ -104,11 +99,11 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+        // `getStats`, if called repeatedly to drive an animation, is quite noisy
         if (call.method != "getStats") {
             debug("onMethodCall => received ${call.method}")
         }
         when (call.method) {
-            "switchAudioToBluetoothHeadset" -> switchAudioToBluetoothHeadset(result)
             "debug" -> debug(call, result)
             "connect" -> connect(call, result)
             "disconnect" -> disconnect(call, result)
@@ -795,70 +790,5 @@ class PluginHandler : MethodCallHandler, ActivityAware, BaseListener {
 
     internal fun debug(msg: String) {
         TwilioProgrammableVideoPlugin.debug("$TAG::$msg")
-    }
-
-    private fun switchAudioToBluetoothHeadset(result: MethodChannel.Result) {
-        val bluetoothManager = applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val adapter: BluetoothAdapter? = bluetoothManager.adapter
-
-        if (adapter != null) {
-            adapter.getProfileProxy(applicationContext, object : BluetoothProfile.ServiceListener {
-                override fun onServiceConnected(profile: Int, proxy: BluetoothProfile) {
-                    if (profile == BluetoothProfile.HEADSET) {
-                        val connectedDevices = proxy.connectedDevices
-                        debug("Connected Bluetooth Devices: $connectedDevices")
-
-                        if (connectedDevices.isNotEmpty()) {
-                            // Enable Bluetooth SCO and route audio
-                            audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
-                            audioManager.startBluetoothSco()
-                            audioManager.isBluetoothScoOn = true
-                            debug("Audio routed to Bluetooth Headset")
-                            result.success("Audio routed to Bluetooth Headset")
-                        } else {
-                            debug("No connected Bluetooth devices")
-                            result.error("NO_DEVICE", "No connected Bluetooth devices", null)
-                        }
-                        adapter.closeProfileProxy(BluetoothProfile.HEADSET, proxy)
-                    }
-                }
-
-                override fun onServiceDisconnected(profile: Int) {
-                    if (profile == BluetoothProfile.HEADSET) {
-                        debug("Bluetooth Profile Disconnected")
-                    }
-                }
-            }, BluetoothProfile.HEADSET)
-        } else {
-            debug("Bluetooth adapter is null")
-            result.error("ADAPTER_NULL", "Bluetooth adapter is null", null)
-        }
-    }
-
-    private val bluetoothReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            if (BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED == action) {
-                val state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED)
-                if (state == BluetoothHeadset.STATE_CONNECTED) {
-                    debug("Bluetooth Headset Connected")
-                    switchAudioToBluetoothHeadset(object : MethodChannel.Result {
-                        override fun success(result: Any?) {
-                            debug("Successfully switched audio to Bluetooth Headset")
-                        }
-
-                        override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
-                            debug("Failed to switch audio to Bluetooth Headset: $errorMessage")
-                        }
-
-                        override fun notImplemented() {
-                            debug("switchAudioToBluetoothHeadset method not implemented")
-                        }
-                    })
-                } else if (state == BluetoothHeadset.STATE_DISCONNECTED) {
-                    debug("Bluetooth Headset Disconnected")
-                }
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 package twilio.flutter.twilio_programmable_video
 
-class AudioSettings(speakerEnabled: Boolean = true, bluetoothPreferred: Boolean = true) {
+class AudioSettings(speakerEnabled: Boolean = true, bluetoothPreferred: Boolean = false) {
     var speakerEnabled: Boolean
     var bluetoothPreferred: Boolean
 

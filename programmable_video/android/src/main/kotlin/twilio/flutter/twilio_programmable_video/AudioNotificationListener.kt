@@ -25,13 +25,14 @@ class AudioNotificationListener() : BaseListener() {
         }
 
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-            debug("onServiceConnected => profile: $profile, proxy: $proxy")
-            if (profile == BluetoothProfile.HEADSET) {
-                bluetoothProfile = proxy
-                val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
-                debug("Connected Bluetooth Devices: $connectedDevices")
-                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+            if(TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred){
+                if (profile == BluetoothProfile.HEADSET) {
+                    bluetoothProfile = proxy
+                    val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
+                    debug("Connected Bluetooth Devices: $connectedDevices")
+                    if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                        TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+                    }
                 }
             }
         }
@@ -61,15 +62,18 @@ class AudioNotificationListener() : BaseListener() {
     fun listenForRouteChanges(context: Context) {
         debug("listenForRouteChanges")
         context.registerReceiver(receiver, intentFilter)
-        BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+        if(TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred){
+          BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+        }
     }
 
     fun stopListeningForRouteChanges(context: Context) {
         debug("stopListeningForRouteChanges")
         context.unregisterReceiver(receiver)
-        BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
+        if(TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred){
+          BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
+        }
     }
-
     private fun getBroadcastReceiver(): BroadcastReceiver {
         debug("getBroadcastReceiver")
         return object : BroadcastReceiver() {

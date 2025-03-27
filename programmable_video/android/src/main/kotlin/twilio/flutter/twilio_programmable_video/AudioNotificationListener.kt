@@ -38,7 +38,7 @@ class AudioNotificationListener() : BaseListener() {
                 bluetoothProfile = proxy
                 val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
                 debug("Connected Bluetooth Devices: $connectedDevices")
-                if (connectedDevices.isNotEmpty()) {
+                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
                     TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
                 }
             }

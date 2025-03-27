@@ -15,33 +15,31 @@ class AudioNotificationListener() : BaseListener() {
     private val TAG = "AudioNotificationListener"
     private val intentFilter: IntentFilter = IntentFilter()
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
-
-    private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
-        override fun onServiceDisconnected(profile: Int) {
-            debug("onServiceDisconnected => profile: $profile")
-            if (profile == BluetoothProfile.HEADSET) {
-                bluetoothProfile = null
-                TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+    if(TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+        private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
+            override fun onServiceDisconnected(profile: Int) {
+                debug("onServiceDisconnected => profile: $profile")
+                if (profile == BluetoothProfile.HEADSET) {
+                    bluetoothProfile = null
+                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+                }
             }
-        }
-
+    }
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             debug("onServiceConnected => profile: $profile, proxy: $proxy")
 
             // Skip Bluetooth-related logic if Bluetooth is not preferred
-            if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                debug("Bluetooth not preferred, skipping onServiceConnected logic")
-                return
+            if (TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                if (profile == BluetoothProfile.HEADSET) {
+                    bluetoothProfile = proxy
+                    val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
+                    debug("Connected Bluetooth Devices: $connectedDevices")
+                    if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                        TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+                    }
+                }  
             }
-
-            if (profile == BluetoothProfile.HEADSET) {
-                bluetoothProfile = proxy
-                val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
-                debug("Connected Bluetooth Devices: $connectedDevices")
-                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-                }
-            }
+           
         }
     }
 

@@ -15,6 +15,7 @@ class AudioNotificationListener() : BaseListener() {
     private val TAG = "AudioNotificationListener"
     private val intentFilter: IntentFilter = IntentFilter()
     private val activeAudioPlayers: MutableSet<String> = mutableSetOf()
+    debug("AudioNotificationListener => bluetoothPreferred: ${TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred}")
     if(TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
         private var bluetoothProfileProxy: BluetoothProfile.ServiceListener = object : BluetoothProfile.ServiceListener {
             override fun onServiceDisconnected(profile: Int) {

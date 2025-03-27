@@ -50,11 +50,13 @@ class AudioNotificationListener() : BaseListener() {
     private val receiver: BroadcastReceiver = getBroadcastReceiver()
 
     init {
+        if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+            debug("Bluetooth not preferred, skipping Bluetooth setup")
+            intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
+        }
         // https://developer.android.com/reference/android/media/AudioManager#ACTION_HEADSET_PLUG
         intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG)
         // https://developer.android.com/reference/android/bluetooth/BluetoothHeadset#ACTION_CONNECTION_STATE_CHANGED
-        intentFilter.addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
-
         // Other actions we could listen for:
         // 1. AudioManager.ACTION_SCO_AUDIO_STATE_UPDATED
         //      https://developer.android.com/reference/android/media/AudioManager#ACTION_SCO_AUDIO_STATE_UPDATED
@@ -81,8 +83,7 @@ class AudioNotificationListener() : BaseListener() {
 
         // Use BluetoothManager to get the BluetoothHeadset profile
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.adapter
-        val bluetoothHeadset = bluetoothAdapter.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+        bluetoothManager.adapter?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
 
         debug("Listening for Bluetooth route changes")
     }
@@ -90,20 +91,15 @@ class AudioNotificationListener() : BaseListener() {
     fun stopListeningForRouteChanges(context: Context) {
         debug("stopListeningForRouteChanges")
 
-        // Unregister the receiver
-        context.unregisterReceiver(receiver)
-
-        // Release the BluetoothProfile if it exists
-        if (bluetoothProfile != null) {
-            try {
-                (bluetoothProfile as? BluetoothHeadset)?.let {
-                    debug("Releasing BluetoothProfile")
-                    bluetoothProfile = null
-                }
-            } catch (e: Exception) {
-                debug("Error while releasing BluetoothProfile: ${e.message}")
-            }
+        // Do nothing if Bluetooth is not preferred
+        if (!TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+            debug("Bluetooth not preferred, no need to stop Bluetooth services")
+            return
         }
+
+        // Unregister the receiver and close the Bluetooth profile proxy
+        context.unregisterReceiver(receiver)
+        BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
     }
 
     private fun getBroadcastReceiver(): BroadcastReceiver {

@@ -38,7 +38,7 @@ class AudioNotificationListener() : BaseListener() {
                 bluetoothProfile = proxy
                 val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
                 debug("Connected Bluetooth Devices: $connectedDevices")
-                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                if (connectedDevices.isNotEmpty()) {
                     TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
                 }
             }
@@ -81,11 +81,12 @@ class AudioNotificationListener() : BaseListener() {
         // Register the receiver and listen for Bluetooth events
         context.registerReceiver(receiver, intentFilter)
 
-        // Use BluetoothManager to get the BluetoothHeadset profile
+        // Use BluetoothManager to get the BluetoothHeadset profile only if Bluetooth is preferred
         val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bluetoothManager.adapter?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
-
-        debug("Listening for Bluetooth route changes")
+        if (TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+            bluetoothManager.adapter?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
+            debug("Listening for Bluetooth route changes")
+        }
     }
 
     fun stopListeningForRouteChanges(context: Context) {
@@ -99,7 +100,10 @@ class AudioNotificationListener() : BaseListener() {
 
         // Unregister the receiver and close the Bluetooth profile proxy
         context.unregisterReceiver(receiver)
-        BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
+        if (bluetoothProfile != null) {
+            BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
+            bluetoothProfile = null
+        }
     }
 
     private fun getBroadcastReceiver(): BroadcastReceiver {
@@ -197,5 +201,6 @@ class AudioNotificationListener() : BaseListener() {
 
     internal fun debug(msg: String) {
         TwilioProgrammableVideoPlugin.debugAudio("$TAG::$msg")
+        debug("BluetoothPreferred: ${TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred}")
     }
 }

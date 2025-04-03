@@ -28,19 +28,14 @@ class AudioNotificationListener() : BaseListener() {
     }
         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
             debug("onServiceConnected => profile: $profile, proxy: $proxy")
-
-            // Skip Bluetooth-related logic if Bluetooth is not preferred
-            if (TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                if (profile == BluetoothProfile.HEADSET) {
-                    bluetoothProfile = proxy
-                    val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
-                    debug("Connected Bluetooth Devices: $connectedDevices")
-                    if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
-                        TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
-                    }
-                }  
+            if (profile == BluetoothProfile.HEADSET) {
+                bluetoothProfile = proxy
+                val connectedDevices = bluetoothProfile?.connectedDevices ?: emptyList()
+                debug("Connected Bluetooth Devices: $connectedDevices")
+                if (connectedDevices.isNotEmpty() && TwilioProgrammableVideoPlugin.pluginHandler.audioSettings.bluetoothPreferred) {
+                    TwilioProgrammableVideoPlugin.pluginHandler.applyAudioSettings()
+                }
             }
-           
         }
     }
 
@@ -77,13 +72,7 @@ class AudioNotificationListener() : BaseListener() {
 
         // Register the receiver and listen for Bluetooth events
         context.registerReceiver(receiver, intentFilter)
-
-        // Use BluetoothManager to get the BluetoothHeadset profile
-        val bluetoothManager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        val bluetoothAdapter = bluetoothManager.adapter
-        val bluetoothHeadset = bluetoothAdapter.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
-
-        debug("Listening for Bluetooth route changes")
+        BluetoothAdapter.getDefaultAdapter()?.getProfileProxy(context, getProfileProxy(), BluetoothProfile.HEADSET)
     }
 
     fun stopListeningForRouteChanges(context: Context) {
@@ -91,20 +80,8 @@ class AudioNotificationListener() : BaseListener() {
 
         // Unregister the receiver
         context.unregisterReceiver(receiver)
-
-        // Release the BluetoothProfile if it exists
-        if (bluetoothProfile != null) {
-            try {
-                (bluetoothProfile as? BluetoothHeadset)?.let {
-                    debug("Releasing BluetoothProfile")
-                    bluetoothProfile = null
-                }
-            } catch (e: Exception) {
-                debug("Error while releasing BluetoothProfile: ${e.message}")
-            }
-        }
+        BluetoothAdapter.getDefaultAdapter()?.closeProfileProxy(BluetoothProfile.HEADSET, bluetoothProfile)
     }
-
     private fun getBroadcastReceiver(): BroadcastReceiver {
         debug("getBroadcastReceiver")
         return object : BroadcastReceiver() {
